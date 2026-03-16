@@ -101,10 +101,10 @@ button:hover {
 
 @media (max-width: 767px) {
 	:root {
-		--font-size-xs: clamp(0.72rem, 0.7rem + 0.14vw, 0.8rem);
-		--font-size-base: clamp(0.84rem, 0.82rem + 0.2vw, 0.92rem);
-		--font-size-md: clamp(0.96rem, 0.9rem + 0.38vw, 1.12rem);
-		--font-size-lg: clamp(1.2rem, 1.06rem + 1vw, 1.6rem);
-		--font-size-xl: clamp(1.55rem, 1.3rem + 1.7vw, 2.2rem);
+		--font-size-xs: clamp(0.84rem, 0.8rem + 0.2vw, 0.94rem);
+		--font-size-base: clamp(1rem, 0.95rem + 0.28vw, 1.1rem);
+		--font-size-md: clamp(1.14rem, 1.05rem + 0.48vw, 1.32rem);
+		--font-size-lg: clamp(1.42rem, 1.22rem + 1.3vw, 2rem);
+		--font-size-xl: clamp(1.9rem, 1.52rem + 2.1vw, 2.85rem);
 	}
 }
