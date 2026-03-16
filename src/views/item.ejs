@@ -1,0 +1,39 @@
+<section class="auction-item-detail" aria-labelledby="itemTitle">
+	<nav class="auction-item-detail__crumbs" aria-label="Breadcrumb">
+		<a href="/home" class="auction-item-detail__back-link">← Back to bidding room</a>
+	</nav>
+
+	<div class="auction-item-detail__layout">
+		<article class="auction-item-showcase" aria-label="Auction item details">
+			<div class="auction-item-showcase__media">
+				<img src="<%= item.image %>" alt="Preview of <%= item.title %>" class="auction-item-showcase__image">
+			</div>
+
+			<div class="auction-item-showcase__content">
+				<p class="auction-item-showcase__label"><%= item.label %></p>
+				<h1 id="itemTitle" class="auction-item-showcase__title"><%= item.title %></h1>
+				<p class="auction-item-showcase__location"><%= item.location %></p>
+				<p class="auction-item-showcase__description"><%= item.description %></p>
+
+				<ul class="auction-item-showcase__highlights">
+					<% for (const highlight of item.highlights) { %>
+						<li><%= highlight %></li>
+					<% } %>
+				</ul>
+			</div>
+		</article>
+
+		<aside class="auction-item-summary" aria-label="Auction status and package details">
+			<div class="auction-item-summary__card">
+				<h2 class="auction-item-summary__title">Package includes</h2>
+				<ul class="auction-item-summary__includes">
+					<% for (const includeItem of item.includes) { %>
+						<li><%= includeItem %></li>
+					<% } %>
+				</ul>
+			</div>
+		</aside>
+	</div>
+</section>
+
+<script src="/js/item.js" defer></script>

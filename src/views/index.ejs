@@ -1,0 +1,60 @@
+	<section class="auction-home" aria-labelledby="auctionTitle">
+	<header class="auction-home__header">
+		<p class="auction-home__kicker">EAAM Silent Auction</p>
+		<h1 id="auctionTitle" class="auction-home__title">Live Bidding Room</h1>
+	</header>
+
+	<div class="auction-home__grid">
+		<a href="/items/vacation-stay-for-2" class="auction-item-card" aria-label="View details for Luxury Vacation Stay for 2">
+			<div class="auction-item-card__media">
+				<img src="/images/paira-daiza.webp" alt="Preview of Luxury Vacation Stay for 2" class="auction-item-card__image">
+			</div>
+
+			<div class="auction-item-card__content">
+				<p class="auction-item-card__label">Featured lot</p>
+				<h2 class="auction-item-card__title">Luxury Vacation Stay for 2</h2>
+				<p class="auction-item-card__description">
+					3 nights, breakfast included, plus a sunset boat tour.
+				</p>
+				<span class="auction-item-card__link">View details</span>
+			</div>
+		</a>
+
+		<aside class="auction-bid-panel" aria-label="Quick bidding controls">
+			<div class="auction-bid-panel__current" aria-live="polite">
+				<p class="auction-bid-panel__label">Current highest bid</p>
+				<p id="currentBidAmount" class="auction-bid-panel__amount">€ 1,250</p>
+			</div>
+
+			<div class="auction-bid-panel__actions" role="group" aria-label="Quick add bid amounts">
+				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="25" aria-pressed="false">+ €25</button>
+				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="50" aria-pressed="false">+ €50</button>
+				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="100" aria-pressed="false">+ €100</button>
+				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="250" aria-pressed="false">+ €250</button>
+			</div>
+
+			<div class="auction-bid-panel__custom">
+				<div class="auction-bid-panel__custom-field">
+					<span class="auction-bid-panel__custom-currency" aria-hidden="true">€</span>
+					<input
+						id="customBidAmount"
+						class="auction-bid-panel__custom-input"
+						type="number"
+						min="10"
+						step="1"
+						inputmode="numeric"
+						placeholder="Custom amount (€10 or more)"
+						aria-label="Custom bid amount in euros"
+					>
+				</div>
+			</div>
+
+			<button type="button" class="auction-bid-panel__cta" disabled>Place Bid</button>
+		</aside>
+	</div>
+
+	<%- include("partials/bid-modal") %>
+	</section>
+
+<script src="/js/home.js" defer></script>
+<script src="/js/home-modal.js" defer></script>

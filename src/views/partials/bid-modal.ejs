@@ -1,0 +1,43 @@
+<div id="bidConfirmModal" class="bid-modal" role="dialog" aria-modal="true" aria-labelledby="bidConfirmTitle" hidden>
+	<div class="bid-modal__surface" data-bid-modal-state="confirm">
+		<div class="bid-modal__content bid-modal__content--confirm">
+			<p class="bid-modal__kicker">Confirm bid</p>
+			<h2 id="bidConfirmTitle" class="bid-modal__title">Check your total before placing it</h2>
+			<div class="bid-modal__summary" aria-live="polite">
+				<div class="bid-modal__row">
+					<span class="bid-modal__label">Current price</span>
+					<span id="modalCurrentPrice" class="bid-modal__value">€ 1,250</span>
+				</div>
+				<div class="bid-modal__row">
+					<span class="bid-modal__label">You add</span>
+					<span id="modalBidIncrement" class="bid-modal__value">€ 0</span>
+				</div>
+				<div class="bid-modal__row bid-modal__row--total">
+					<span class="bid-modal__label">New total</span>
+					<span id="modalNewTotal" class="bid-modal__value">€ 1,250</span>
+				</div>
+			</div>
+			<div class="bid-modal__actions">
+				<button type="button" class="bid-modal__button bid-modal__button--secondary" data-bid-close>Cancel</button>
+				<button type="button" id="confirmBidButton" class="bid-modal__button bid-modal__button--primary">Confirm Bid</button>
+			</div>
+		</div>
+
+		<div class="bid-modal__content bid-modal__content--loading" aria-live="polite" hidden>
+			<div class="bid-modal__loading-spinner" aria-hidden="true"></div>
+			<p class="bid-modal__kicker">Submitting bid</p>
+			<h2 class="bid-modal__title">Processing your bid...</h2>
+			<p class="bid-modal__success-copy">Please wait while we securely place your bid in the room.</p>
+		</div>
+
+		<div class="bid-modal__content bid-modal__content--success" aria-live="assertive" hidden>
+			<div class="bid-modal__success-mark" aria-hidden="true">
+				<span class="bid-modal__success-ring"></span>
+				<span class="bid-modal__success-check"></span>
+			</div>
+			<p class="bid-modal__kicker bid-modal__kicker--success">Bid accepted</p>
+			<h2 class="bid-modal__title bid-modal__title--success">Your bid has been accepted</h2>
+			<p class="bid-modal__success-copy">Your new highest bid is now being shown in the room.</p>
+		</div>
+	</div>
+</div>

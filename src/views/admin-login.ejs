@@ -1,0 +1,23 @@
+<section class="admin-login" aria-labelledby="adminLoginTitle">
+	<div class="admin-login__card">
+		<p class="admin-login__kicker">EAAM Admin</p>
+		<h1 id="adminLoginTitle" class="admin-login__title">Protected dashboard</h1>
+		<p class="admin-login__copy">Enter the admin password to view all bids and analytics.</p>
+
+		<form method="post" action="/admin/login" class="admin-login__form" novalidate>
+			<label for="adminPassword" class="admin-login__label">Password</label>
+			<input
+				id="adminPassword"
+				name="password"
+				type="password"
+				required
+				autocomplete="current-password"
+				class="admin-login__input"
+			>
+			<% if (error) { %>
+				<p class="admin-login__error" role="alert"><%= error %></p>
+			<% } %>
+			<button type="submit" class="admin-login__submit">Open admin dashboard</button>
+		</form>
+	</div>
+</section>

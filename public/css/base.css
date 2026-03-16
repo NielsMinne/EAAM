@@ -16,6 +16,11 @@
 	color-scheme: light;
 }
 
+html,
+body {
+	overflow: hidden;
+}
+
 body {
 	margin: 0;
 	font-family: "Manrope", "Segoe UI", sans-serif;
@@ -47,9 +52,7 @@ h3 {
 }
 
 header {
-	border-bottom: 1px solid var(--line);
 	padding: 0.9rem 1rem;
-	background: rgba(255, 255, 255, 0.75);
 	backdrop-filter: blur(3px);
 }
 
@@ -63,7 +66,6 @@ main {
 	width: 100%;
 	max-width: 760px;
 	margin: 1.2rem auto;
-	padding: 0 1rem;
 }
 
 input,

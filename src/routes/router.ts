@@ -1,21 +1,14 @@
-import express, { Request, Response, Router } from "express";
+import { Router } from "express";
+import { handleAdminLogin, renderAdminDashboardOrLogin } from "../controllers/admin-controller";
+import { renderHome, renderItemDetail, renderRegister, renderWelcome } from "../controllers/page-controller";
 
-const router: Router = express.Router();
+const router: Router = Router();
 
-// Welcome/loading page -> naar register of home
-router.get("/", (req: Request, res: Response): void => {
-  res.render("welcome", { title: "EAAM - Welkom" });
-});
-
-// Register page
-router.get("/register", (req: Request, res: Response): void => {
-  res.render("register", { title: "EAAM - Register", bodyClass: "register-page" });
-});
-
-// Homepagina
-router.get("/home", (req: Request, res: Response): void => {
-  res.render("index", { title: "EAAM - Home", bodyClass: "home-page" });
-});
-
+router.get("/", renderWelcome);
+router.get("/register", renderRegister);
+router.get("/home", renderHome);
+router.get("/items/:slug", renderItemDetail);
+router.get("/admin", renderAdminDashboardOrLogin);
+router.post("/admin/login", handleAdminLogin);
 
 export default router;

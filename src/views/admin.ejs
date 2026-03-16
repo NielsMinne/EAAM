@@ -1,0 +1,135 @@
+<section class="admin-dashboard" aria-labelledby="adminTitle">
+	<header class="admin-dashboard__header">
+		<p class="admin-dashboard__kicker">EAAM Admin</p>
+		<h1 id="adminTitle" class="admin-dashboard__title">Bidding overview</h1>
+	</header>
+
+	<div class="admin-dashboard__layout">
+		<article class="admin-card admin-card--table" aria-label="All bids list">
+			<h2 class="admin-card__title">All bids</h2>
+			<p class="admin-card__meta">Showing <%= pageStart %>-<%= pageEnd %> of <%= totalBids %> bids</p>
+			<div class="admin-table-wrap">
+				<table class="admin-table">
+					<thead>
+						<tr>
+							<th scope="col">Day</th>
+							<th scope="col">Time</th>
+							<th scope="col">Bidder</th>
+							<th scope="col">Added amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for (const bid of bids) { %>
+							<tr>
+								<td><%= bid.day %></td>
+								<td><%= bid.time %></td>
+								<td><%= bid.bidder %></td>
+								<td class="admin-table__amount"><%= bid.addedAmountFormatted %></td>
+							</tr>
+						<% } %>
+					</tbody>
+				</table>
+			</div>
+
+			<% if (totalPages > 1) { %>
+				<nav class="admin-pagination" aria-label="Bids pagination">
+					<% if (hasPrevPage) { %>
+						<a href="/admin?page=<%= prevPage %>" class="admin-pagination__link">Previous</a>
+					<% } else { %>
+						<span class="admin-pagination__link admin-pagination__link--disabled" aria-disabled="true">Previous</span>
+					<% } %>
+
+					<div class="admin-pagination__pages">
+						<% for (const pageNumber of pageNumbers) { %>
+							<% if (pageNumber === currentPage) { %>
+								<span class="admin-pagination__page admin-pagination__page--active" aria-current="page"><%= pageNumber %></span>
+							<% } else { %>
+								<a href="/admin?page=<%= pageNumber %>" class="admin-pagination__page"><%= pageNumber %></a>
+							<% } %>
+						<% } %>
+					</div>
+
+					<% if (hasNextPage) { %>
+						<a href="/admin?page=<%= nextPage %>" class="admin-pagination__link">Next</a>
+					<% } else { %>
+						<span class="admin-pagination__link admin-pagination__link--disabled" aria-disabled="true">Next</span>
+					<% } %>
+				</nav>
+			<% } %>
+		</article>
+
+		<article class="admin-card" aria-label="Bidding chart">
+			<h2 class="admin-card__title">Number of bids per day</h2>
+			<div class="admin-chart-wrap">
+				<canvas
+					id="bidsChart"
+					aria-label="Chart showing number of bids per day"
+					role="img"
+					data-labels="<%= JSON.stringify(chartLabels) %>"
+					data-values="<%= JSON.stringify(chartValues) %>"
+				></canvas>
+			</div>
+		</article>
+	</div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(() => {
+	const canvas = document.getElementById("bidsChart");
+	if (!(canvas instanceof HTMLCanvasElement) || typeof Chart === "undefined") {
+		return;
+	}
+
+	const labels = JSON.parse(canvas.dataset.labels || "[]");
+	const values = JSON.parse(canvas.dataset.values || "[]");
+
+	new Chart(canvas, {
+		type: "bar",
+		data: {
+			labels,
+			datasets: [
+				{
+					label: "Bids",
+					data: values,
+					borderColor: "#2f8bc7",
+					backgroundColor: "rgba(47, 139, 199, 0.45)",
+					borderWidth: 1,
+					borderRadius: 8
+				}
+			]
+		},
+		options: {
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {
+					display: false
+				},
+				tooltip: {
+					callbacks: {
+						label: (context) => `Bids: ${Number(context.parsed.y || 0)}`
+					}
+				}
+			},
+			scales: {
+				x: {
+					grid: {
+						display: false
+					}
+				},
+				y: {
+					beginAtZero: true,
+					grace: 1,
+					grid: {
+						color: "rgba(17, 73, 102, 0.08)"
+					},
+					ticks: {
+						precision: 0,
+						stepSize: 1
+					}
+				}
+			}
+		}
+	});
+})();
+</script>
