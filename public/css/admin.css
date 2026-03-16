@@ -278,12 +278,8 @@ body:has(.admin-dashboard) main {
 	}
 
 	.admin-dashboard {
-		transform: scale(0.94);
+		transform: scale(0.82);
 		transform-origin: top center;
-	}
-
-	.admin-card--chart {
-		display: none;
 	}
 
 	.admin-card__title {

@@ -16,11 +16,6 @@
 	color-scheme: light;
 }
 
-html,
-body {
-	overflow: hidden;
-}
-
 body {
 	margin: 0;
 	font-family: "Manrope", "Segoe UI", sans-serif;

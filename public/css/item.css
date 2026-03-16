@@ -448,26 +448,13 @@ body.auction-item--navigating main::after {
 	}
 
 	.auction-item-detail {
-		transform: scale(0.94);
+		transform: scale(0.86);
 		transform-origin: top center;
 	}
 
 	.auction-item-showcase__media,
 	.auction-item-showcase__image {
 		min-height: 88px;
-	}
-
-	.auction-item-showcase__description {
-		display: -webkit-box;
-		line-clamp: 3;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-
-	.auction-item-showcase__highlights li:nth-child(n + 3),
-	.auction-item-summary__includes li:nth-child(n + 3) {
-		display: none;
 	}
 
 	.auction-item-summary__amount {
