@@ -37,7 +37,7 @@ const getBidsPerDay = (bids: AdminBid[]): Map<string, number> => {
 };
 
 export const getAdminDashboardData = (rawPage: string | undefined): AdminDashboardData => {
-  const pageSize = 10;
+  const pageSize = 6;
   const parsedPage = Number.parseInt(rawPage || "1", 10);
   const totalPages = Math.max(1, Math.ceil(adminBids.length / pageSize));
   const currentPage = Number.isNaN(parsedPage)
