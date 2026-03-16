@@ -1,100 +1,23 @@
-<section class="register-shell" aria-labelledby="registerTitle">
-    <div class="register-card">
-        <p class="register-kicker">EAAM</p>
-        <h1 id="registerTitle">Register to Continue</h1>
-        <p class="register-copy">Please enter your details to access the bidding home page.</p>
+<section class="register" aria-labelledby="registerTitle">
+    <div class="register__card">
+        <p class="register__tag">EAAM</p>
+        <h1 id="registerTitle" class="register__title">Register to Continue</h1>
+        <p class="register__description">Please enter your details to access the bidding home page.</p>
 
-        <form id="registerForm" class="register-form" novalidate>
-            <label for="firstName">First name</label>
-            <input id="firstName" name="firstName" type="text" autocomplete="given-name" required>
+        <form id="registerForm" class="register__form" novalidate>
+            <label for="firstName" class="register__label">First name</label>
+            <input id="firstName" name="firstName" type="text" class="register__input" autocomplete="given-name" required>
 
-            <label for="lastName">Last name</label>
-            <input id="lastName" name="lastName" type="text" autocomplete="family-name" required>
+            <label for="lastName" class="register__label">Last name</label>
+            <input id="lastName" name="lastName" type="text" class="register__input" autocomplete="family-name" required>
 
-            <label for="email">Email address</label>
-            <input id="email" name="email" type="email" autocomplete="email" required>
+            <label for="email" class="register__label">Email address</label>
+            <input id="email" name="email" type="email" class="register__input" autocomplete="email" required>
 
-            <button type="submit">Continue to bidding</button>
-            <p id="registerError" class="register-error" role="alert" aria-live="polite"></p>
+            <button type="submit" class="register__submit">Continue to bidding</button>
+            <p id="registerError" class="register__error" role="alert" aria-live="polite"></p>
         </form>
     </div>
 </section>
 
-<script>
-    (function () {
-        function readCookie(name) {
-            var target = name + "=";
-            var parts = document.cookie ? document.cookie.split("; ") : [];
-
-            for (var i = 0; i < parts.length; i += 1) {
-                if (parts[i].indexOf(target) === 0) {
-                    return parts[i].substring(target.length);
-                }
-            }
-
-            return null;
-        }
-
-        function getRegistrationFromCookie() {
-            try {
-                var raw = readCookie("eaamRegistration");
-                if (!raw) {
-                    return null;
-                }
-
-                var parsed = JSON.parse(decodeURIComponent(raw));
-                if (!parsed || !parsed.firstName || !parsed.lastName || !parsed.email) {
-                    return null;
-                }
-
-                return parsed;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function hasRegistration() {
-            return Boolean(getRegistrationFromCookie());
-        }
-
-        if (hasRegistration()) {
-            window.location.replace("/home");
-            return;
-        }
-
-        var form = document.getElementById("registerForm");
-        var errorEl = document.getElementById("registerError");
-
-        function isValidEmail(value) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        }
-
-        form.addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            var firstName = document.getElementById("firstName").value.trim();
-            var lastName = document.getElementById("lastName").value.trim();
-            var email = document.getElementById("email").value.trim();
-
-            if (!firstName || !lastName || !isValidEmail(email)) {
-                errorEl.textContent = "Please fill all fields with a valid email address.";
-                return;
-            }
-
-            errorEl.textContent = "";
-
-            var payload = {
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                createdAt: new Date().toISOString()
-            };
-
-            document.cookie =
-                "eaamRegistration=" + encodeURIComponent(JSON.stringify(payload)) +
-                "; max-age=172800; path=/; SameSite=Lax";
-
-            window.location.href = "/home";
-        });
-    })();
-</script>
+<script src="/js/register.js" defer></script>

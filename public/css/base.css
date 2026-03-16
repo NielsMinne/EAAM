@@ -2,36 +2,29 @@
 
 :root {
 	--bg: #eef1f4;
-	--surface: #ffffff;
 	--ink: #122027;
 	--muted: #536470;
 	--accent: #6ea8a2;
 	--accent-strong: #2f8bc7;
 	--line: #d8e0e7;
-	--nav-height: 82px;
 	/* Fluid type scale */
-	--step--1: clamp(0.82rem, 0.79rem + 0.18vw, 0.9rem);
-	--step-0: clamp(0.95rem, 0.9rem + 0.28vw, 1.05rem);
-	--step-1: clamp(1.1rem, 1.02rem + 0.5vw, 1.35rem);
-	--step-2: clamp(1.45rem, 1.2rem + 1.5vw, 2.3rem);
-	--step-3: clamp(1.95rem, 1.5rem + 2.8vw, 3.9rem);
+	--font-size-xs: clamp(0.82rem, 0.79rem + 0.18vw, 0.9rem);
+	--font-size-base: clamp(0.95rem, 0.9rem + 0.28vw, 1.05rem);
+	--font-size-md: clamp(1.1rem, 1.02rem + 0.5vw, 1.35rem);
+	--font-size-lg: clamp(1.45rem, 1.2rem + 1.5vw, 2.3rem);
+	--font-size-xl: clamp(1.95rem, 1.5rem + 2.8vw, 3.9rem);
 	color-scheme: light;
-}
-
-* {
-	box-sizing: border-box;
 }
 
 body {
 	margin: 0;
 	font-family: "Manrope", "Segoe UI", sans-serif;
-	font-size: var(--step-0);
+	font-size: var(--font-size-base);
 	color: var(--ink);
 	background: radial-gradient(circle at 20% 20%, #f8fbff 0%, var(--bg) 58%, #e7edf3 100%);
 }
 
 p {
-	font-size: var(--step-0);
 	line-height: 1.6;
 }
 
@@ -42,15 +35,15 @@ h3 {
 }
 
 h1 {
-	font-size: var(--step-3);
+	font-size: var(--font-size-xl);
 }
 
 h2 {
-	font-size: var(--step-2);
+	font-size: var(--font-size-lg);
 }
 
 h3 {
-	font-size: var(--step-1);
+	font-size: var(--font-size-md);
 }
 
 header {
@@ -63,7 +56,7 @@ header {
 header h1 {
 	margin: 0;
 	font-family: "Fraunces", Georgia, serif;
-	font-size: var(--step-1);
+	font-size: var(--font-size-md);
 }
 
 main {
@@ -76,7 +69,7 @@ main {
 input,
 button {
 	font: inherit;
-	font-size: var(--step-0);
+	font-size: var(--font-size-base);
 	padding: 0.72rem 0.95rem;
 	border-radius: 10px;
 }

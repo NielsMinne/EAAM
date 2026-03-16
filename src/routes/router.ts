@@ -2,9 +2,9 @@ import express, { Request, Response, Router } from "express";
 
 const router: Router = express.Router();
 
-// Welcome/loading page
+// Welcome/loading page -> naar register of home
 router.get("/", (req: Request, res: Response): void => {
-  res.render("welcome", { title: "EAAM - Welkom", layout: false });
+  res.render("welcome", { title: "EAAM - Welkom" });
 });
 
 // Register page
