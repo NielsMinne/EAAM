@@ -768,7 +768,7 @@ body.auction-home--navigating main::after {
 
 @media (max-width: 767px) and (max-height: 760px) {
 	body:has(.auction-home) main {
-		padding: 0.45rem 0.55rem;
+		padding: 0.45rem 0.2rem;
 	}
 
 	.auction-home {

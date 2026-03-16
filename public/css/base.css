@@ -98,13 +98,3 @@ button:hover {
 		margin: 2rem auto;
 	}
 }
-
-@media (max-width: 767px) {
-	:root {
-		--font-size-xs: clamp(0.84rem, 0.8rem + 0.2vw, 0.94rem);
-		--font-size-base: clamp(1rem, 0.95rem + 0.28vw, 1.1rem);
-		--font-size-md: clamp(1.14rem, 1.05rem + 0.48vw, 1.32rem);
-		--font-size-lg: clamp(1.42rem, 1.22rem + 1.3vw, 2rem);
-		--font-size-xl: clamp(1.9rem, 1.52rem + 2.1vw, 2.85rem);
-	}
-}
