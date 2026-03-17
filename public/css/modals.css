@@ -152,6 +152,14 @@
 	text-align: right;
 }
 
+.bid-modal__value--pulse-current {
+	animation: bidValuePulseCurrent 0.52s ease;
+}
+
+.bid-modal__value--pulse-total {
+	animation: bidValuePulseTotal 0.58s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
 .bid-modal__actions {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -305,6 +313,39 @@
 	}
 }
 
+@keyframes bidValuePulseCurrent {
+	0% {
+		transform: translateY(0) scale(1);
+		color: #35586b;
+	}
+	45% {
+		transform: translateY(-2px) scale(1.03);
+		color: #1a6f9f;
+	}
+	100% {
+		transform: translateY(0) scale(1);
+		color: #35586b;
+	}
+}
+
+@keyframes bidValuePulseTotal {
+	0% {
+		transform: scale(1);
+		color: #10344a;
+		text-shadow: 0 0 0 rgba(23, 118, 172, 0);
+	}
+	50% {
+		transform: scale(1.06);
+		color: #0e5d87;
+		text-shadow: 0 0 14px rgba(23, 118, 172, 0.18);
+	}
+	100% {
+		transform: scale(1);
+		color: #10344a;
+		text-shadow: 0 0 0 rgba(23, 118, 172, 0);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.bid-modal__surface,
 	.bid-modal__kicker--success,
@@ -313,7 +354,9 @@
 	.bid-modal__success-ring,
 	.bid-modal__success-ring::after,
 	.bid-modal__success-check,
-	.bid-modal__success-copy {
+	.bid-modal__success-copy,
+	.bid-modal__value--pulse-current,
+	.bid-modal__value--pulse-total {
 		animation: none;
 		transition: none;
 	}

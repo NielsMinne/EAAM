@@ -2,6 +2,8 @@ import express, { Application } from "express";
 import path from "path";
 import expressLayouts from "express-ejs-layouts";
 import routes from "./routes/router";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app: Application = express();
 const PORT : number = parseInt(<string>process.env.PORT, 10) || 3000;
@@ -19,6 +21,7 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 
 // Middleware om formulierdata te verwerken
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Routes gebruiken
 app.use("/", routes);

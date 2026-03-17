@@ -57,7 +57,7 @@
 		errorEl.textContent = "";
 	};
 
-	form.addEventListener("submit", (event) => {
+	form.addEventListener("submit", async (event) => {
 		event.preventDefault();
 
 		const firstNameInput = document.getElementById("firstName");
@@ -99,17 +99,31 @@
 			return;
 		}
 
-		const payload = {
-			firstName,
-			lastName,
-			email,
-			createdAt: new Date().toISOString()
-		};
+		try {
+			const response = await fetch("/api/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					firstName,
+					lastName,
+					email
+				})
+			});
 
-		document.cookie =
-			"eaamRegistration=" + encodeURIComponent(JSON.stringify(payload)) +
-			"; max-age=172800; path=/; SameSite=Lax";
+			const body = await response.json().catch(() => ({}));
 
-		window.location.href = "/home";
+			if (!response.ok) {
+				errorEl.textContent = body?.message || "Unable to continue right now. Please try again.";
+				return;
+			}
+
+			window.location.href = typeof body?.redirectTo === "string" ? body.redirectTo : "/home";
+			return;
+		} catch (error) {
+			errorEl.textContent = "Unable to continue right now. Please try again.";
+			return;
+		}
 	});
 })();

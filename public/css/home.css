@@ -410,6 +410,18 @@ body.auction-home--navigating main::after {
   text-align: center;
 }
 
+.auction-bid-panel__current--leading {
+  border-color: #9fd5be;
+  background:
+    radial-gradient(
+      circle at 20% 18%,
+      rgba(255, 255, 255, 0.88),
+      transparent 36%
+    ),
+    linear-gradient(180deg, #f2fcf8 0%, #d9f1e7 100%);
+  box-shadow: inset 0 -3px 0 rgba(31, 143, 105, 0.18);
+}
+
 .auction-bid-panel__label {
   margin: 0;
   font-size: var(--font-size-xs);
@@ -427,6 +439,21 @@ body.auction-home--navigating main::after {
   color: #0c3448;
   text-shadow: 0 10px 18px rgba(15, 59, 82, 0.12);
   text-align: center;
+}
+
+.auction-bid-panel__amount-yours {
+  display: none;
+  margin-left: 0.3rem;
+  font-family: "Nunito", "Inter", sans-serif;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #1f8f69;
+  vertical-align: middle;
+}
+
+.auction-bid-panel__amount-yours--visible {
+  display: inline;
 }
 
 .auction-bid-panel__amount--updating {

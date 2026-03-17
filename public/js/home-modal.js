@@ -47,6 +47,22 @@
   let bidLoadingTimeoutId = null;
   let bidModalFadeTimeoutId = null;
   let lockedScrollY = 0;
+  let latestPlannedIncrement = 0;
+
+  const pulseValue = (element, pulseClass) => {
+    element.classList.remove(pulseClass);
+    void element.offsetWidth;
+    element.classList.add(pulseClass);
+  };
+
+  const setValueWithPulse = (element, value, pulseClass) => {
+    if (element.textContent === value) {
+      return;
+    }
+
+    element.textContent = value;
+    pulseValue(element, pulseClass);
+  };
 
   const lockPageScroll = () => {
     lockedScrollY = window.scrollY;
@@ -93,12 +109,21 @@
 
   const updateModalSummary = () => {
     const currentValue = homeBidPage.getCurrentBidValue();
-    const incrementValue = homeBidPage.getActiveIncrement();
+    const activeIncrement = homeBidPage.getActiveIncrement();
+    const incrementValue = activeIncrement > 0 ? activeIncrement : latestPlannedIncrement;
     const newTotal = currentValue + incrementValue;
 
-    modalCurrentPrice.textContent = homeBidPage.formatCurrency(currentValue);
+    setValueWithPulse(
+      modalCurrentPrice,
+      homeBidPage.formatCurrency(currentValue),
+      "bid-modal__value--pulse-current",
+    );
     modalBidIncrement.textContent = homeBidPage.formatCurrency(incrementValue);
-    modalNewTotal.textContent = homeBidPage.formatCurrency(newTotal);
+    setValueWithPulse(
+      modalNewTotal,
+      homeBidPage.formatCurrency(newTotal),
+      "bid-modal__value--pulse-total",
+    );
   };
 
   const closeModal = () => {
@@ -134,9 +159,12 @@
   };
 
   const openModal = () => {
-    if (homeBidPage.getActiveIncrement() <= 0) {
+    const incrementValue = homeBidPage.getActiveIncrement();
+    if (incrementValue <= 0) {
       return;
     }
+
+    latestPlannedIncrement = incrementValue;
 
     if (bidModalFadeTimeoutId !== null) {
       window.clearTimeout(bidModalFadeTimeoutId);
@@ -180,7 +208,15 @@
     }
   });
 
-  confirmBidButton.addEventListener("click", () => {
+  if (typeof homeBidPage.subscribeToCurrentBid === "function") {
+    homeBidPage.subscribeToCurrentBid(() => {
+      if (!bidConfirmModal.hidden && bidModalSurface.dataset.bidModalState === "confirm") {
+        updateModalSummary();
+      }
+    });
+  }
+
+  confirmBidButton.addEventListener("click", async () => {
     const currentValue = homeBidPage.getCurrentBidValue();
     const incrementValue = homeBidPage.getActiveIncrement();
 
@@ -190,6 +226,7 @@
     }
 
     const newTotalValue = currentValue + incrementValue;
+    latestPlannedIncrement = incrementValue;
     homeBidPage.clearBidControls();
     bidModalSurface.dataset.bidModalState = "loading";
     confirmContent.hidden = true;
@@ -198,20 +235,51 @@
     closeBidButton.disabled = true;
     confirmBidButton.disabled = true;
 
-    bidLoadingTimeoutId = window.setTimeout(() => {
-      homeBidPage.highlightCurrentBidAmount();
-      homeBidPage.animateCurrentBidAmount(currentValue, newTotalValue);
-      bidModalSurface.dataset.bidModalState = "success";
-      loadingContent.hidden = true;
-      successContent.hidden = false;
-      successAudio.currentTime = 0;
-      void successAudio.play().catch(() => {
-        // Ignore autoplay rejections when browser blocks non-user-gesture playback.
+    try {
+      const response = await fetch("/api/bids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount: incrementValue }),
       });
 
-      bidAcceptedTimeoutId = window.setTimeout(() => {
-        closeModal();
-      }, 2300);
-    }, 2000);
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok || !body?.success) {
+        throw new Error(body?.message || "Could not place bid.");
+      }
+
+      const serverCurrentHighestBid =
+        typeof body.currentHighestBid === "number"
+          ? body.currentHighestBid
+          : newTotalValue;
+
+      if (typeof homeBidPage.setHighestBidderIndicator === "function") {
+        homeBidPage.setHighestBidderIndicator(Boolean(body.isCurrentHighestBidder));
+      }
+
+      bidLoadingTimeoutId = window.setTimeout(() => {
+        homeBidPage.highlightCurrentBidAmount();
+        homeBidPage.animateCurrentBidAmount(currentValue, serverCurrentHighestBid);
+        bidModalSurface.dataset.bidModalState = "success";
+        loadingContent.hidden = true;
+        successContent.hidden = false;
+        successAudio.currentTime = 0;
+        void successAudio.play().catch(() => {
+          // Ignore autoplay rejections when browser blocks non-user-gesture playback.
+        });
+
+        bidAcceptedTimeoutId = window.setTimeout(() => {
+          closeModal();
+        }, 2300);
+      }, 2000);
+    } catch (error) {
+      loadingContent.hidden = true;
+      bidModalSurface.dataset.bidModalState = "confirm";
+      confirmContent.hidden = false;
+      closeBidButton.disabled = false;
+      confirmBidButton.disabled = false;
+      window.alert("Unable to place bid right now. Please try again.");
+    }
   });
 })();

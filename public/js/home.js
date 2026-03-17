@@ -69,14 +69,19 @@
   const placeBidButton = document.querySelector(".auction-bid-panel__cta");
   const customBidInput = document.getElementById("customBidAmount");
   const currentBidAmount = document.getElementById("currentBidAmount");
+  const currentBidPanel = document.getElementById("currentBidPanel");
+  const currentBidLabel = currentBidPanel?.querySelector(".auction-bid-panel__label");
   let bidAmountAnimationFrameId = null;
   let bidAmountHighlightTimeoutId = null;
+  const currentBidListeners = [];
 
   if (
     quickBidButtons.length === 0 ||
     !(placeBidButton instanceof HTMLButtonElement) ||
     !(customBidInput instanceof HTMLInputElement) ||
-    !(currentBidAmount instanceof HTMLElement)
+    !(currentBidAmount instanceof HTMLElement) ||
+    !(currentBidPanel instanceof HTMLElement) ||
+    !(currentBidLabel instanceof HTMLElement)
   ) {
     return;
   }
@@ -121,6 +126,29 @@
     }, 1300);
   };
 
+  const setHighestBidderIndicator = (isCurrentHighestBidder) => {
+    const isLeading = Boolean(isCurrentHighestBidder);
+
+    currentBidPanel.classList.toggle(
+      "auction-bid-panel__current--leading",
+      isLeading,
+    );
+
+    currentBidLabel.textContent = isLeading
+      ? "Current highest bid (You)"
+      : "Current highest bid";
+  };
+
+  const notifyCurrentBidChanged = (value) => {
+    for (const listener of currentBidListeners) {
+      try {
+        listener(value);
+      } catch (error) {
+        // Ignore listener errors to keep updates flowing for other listeners.
+      }
+    }
+  };
+
   const animateCurrentBidAmount = (fromValue, toValue) => {
     if (bidAmountAnimationFrameId !== null) {
       window.cancelAnimationFrame(bidAmountAnimationFrameId);
@@ -129,6 +157,7 @@
 
     if (prefersReducedMotion || toValue <= fromValue) {
       currentBidAmount.textContent = formatCurrency(toValue);
+      notifyCurrentBidChanged(toValue);
       return;
     }
 
@@ -156,6 +185,7 @@
 
       currentBidAmount.textContent = formatCurrency(toValue);
       bidAmountAnimationFrameId = null;
+      notifyCurrentBidChanged(toValue);
     };
 
     bidAmountAnimationFrameId = window.requestAnimationFrame(step);
@@ -274,13 +304,98 @@
     getCurrentBidValue,
     setCurrentBidValue: (value) => {
       currentBidAmount.textContent = formatCurrency(value);
+      notifyCurrentBidChanged(value);
     },
     highlightCurrentBidAmount,
     animateCurrentBidAmount,
+    setHighestBidderIndicator,
     clearBidControls,
     cancelBidAnimations,
+    subscribeToCurrentBid: (listener) => {
+      if (typeof listener !== "function") {
+        return () => {};
+      }
+
+      currentBidListeners.push(listener);
+      return () => {
+        const index = currentBidListeners.indexOf(listener);
+        if (index >= 0) {
+          currentBidListeners.splice(index, 1);
+        }
+      };
+    },
+  };
+
+  const applyIncomingHighestBid = (nextValue) => {
+    if (!Number.isFinite(nextValue) || nextValue <= 0) {
+      return;
+    }
+
+    const currentValue = getCurrentBidValue();
+    if (nextValue === currentValue) {
+      return;
+    }
+
+    highlightCurrentBidAmount();
+    animateCurrentBidAmount(currentValue, nextValue);
+  };
+
+  const startBidStream = () => {
+    const pollCurrentBidState = async () => {
+      try {
+        const response = await fetch("/api/bids/current", {
+          headers: {
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = await response.json();
+        console.log(payload);
+        const value = typeof payload?.currentHighestBid === "number"
+          ? payload.currentHighestBid
+          : Number(payload?.currentHighestBid);
+        applyIncomingHighestBid(value);
+        setHighestBidderIndicator(Boolean(payload?.isCurrentHighestBidder));
+      } catch (error) {
+        // Ignore transient poll failures.
+      }
+    };
+
+    if (!("EventSource" in window)) {
+      void pollCurrentBidState();
+      window.setInterval(() => {
+        void pollCurrentBidState();
+      }, 2500);
+      return;
+    }
+
+    const eventSource = new EventSource("/api/bids/stream");
+
+    eventSource.addEventListener("highestBid", (event) => {
+      try {
+        const payload = JSON.parse(event.data);
+        const value = typeof payload?.currentHighestBid === "number"
+          ? payload.currentHighestBid
+          : Number(payload?.currentHighestBid);
+        applyIncomingHighestBid(value);
+        setHighestBidderIndicator(Boolean(payload?.isCurrentHighestBidder));
+      } catch (error) {
+        // Ignore malformed stream events.
+      }
+    });
+
+    eventSource.onerror = () => {
+      // Let EventSource handle reconnect automatically.
+    };
+
+    void pollCurrentBidState();
   };
 
   setSelectedButton(null);
   setCustomBidInvalidState(false);
+  startBidStream();
 })();

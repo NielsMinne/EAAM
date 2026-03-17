@@ -54,9 +54,15 @@
     </a>
 
     <aside class="auction-bid-panel" aria-label="Quick bidding controls">
-      <div class="auction-bid-panel__current" aria-live="polite">
+      <div
+        id="currentBidPanel"
+        class="auction-bid-panel__current <%= isCurrentHighestBidder ? 'auction-bid-panel__current--leading' : '' %>"
+        aria-live="polite"
+      >
         <p class="auction-bid-panel__label">Current highest bid</p>
-        <p id="currentBidAmount" class="auction-bid-panel__amount">€ 1,250</p>
+        <p id="currentBidAmount" class="auction-bid-panel__amount">
+          <%= currentHighestBid %>
+        </p>
       </div>
 
       <div
@@ -67,10 +73,18 @@
         <button
           type="button"
           class="auction-bid-panel__quick-bid"
-          data-bid-value="25"
+          data-bid-value="10"
           aria-pressed="false"
         >
-          + €25
+          + €10
+        </button>
+        <button
+          type="button"
+          class="auction-bid-panel__quick-bid"
+          data-bid-value="20"
+          aria-pressed="false"
+        >
+          + €20
         </button>
         <button
           type="button"
@@ -87,14 +101,6 @@
           aria-pressed="false"
         >
           + €100
-        </button>
-        <button
-          type="button"
-          class="auction-bid-panel__quick-bid"
-          data-bid-value="250"
-          aria-pressed="false"
-        >
-          + €250
         </button>
       </div>
 
