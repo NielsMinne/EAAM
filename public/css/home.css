@@ -497,6 +497,28 @@ body.auction-home--navigating main::after {
   gap: 0.45rem;
 }
 
+.auction-bid-panel__ended {
+  margin-top: 0.4rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid #b8cad8;
+  background: linear-gradient(180deg, #f5f9fc 0%, #eaf1f7 100%);
+  text-align: center;
+}
+
+.auction-bid-panel__ended-title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: #1c4c65;
+}
+
+.auction-bid-panel__ended-value {
+  margin: 0.35rem 0 0;
+  font-size: var(--font-size-base);
+  color: #345c72;
+}
+
 .auction-bid-panel__custom-label {
   margin: 0;
   font-size: var(--font-size-xs);

@@ -1,5 +1,5 @@
 (() => {
-  const initAuctionCountdown = () => {
+  const initAuctionCountdown = (onEnded) => {
     const daysElement = document.getElementById("countdownDays");
     const hoursElement = document.getElementById("countdownHours");
     const minutesElement = document.getElementById("countdownMinutes");
@@ -17,7 +17,12 @@
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const targetTime = Date.now() + 5 * 24 * 60 * 60 * 1000;
+    const now = new Date();
+    const targetDate = new Date(now.getFullYear(), 2, 28, 18, 0, 0, 0);
+    if (targetDate.getTime() <= now.getTime()) {
+      targetDate.setFullYear(targetDate.getFullYear() + 1);
+    }
+    const targetTime = targetDate.getTime();
 
     const animateTick = (element, nextValue) => {
       if (element.textContent === nextValue) {
@@ -36,6 +41,7 @@
     };
 
     const formatUnit = (value) => String(value).padStart(2, "0");
+    let timerIntervalId = null;
 
     const renderCountdown = () => {
       const remainingMs = Math.max(targetTime - Date.now(), 0);
@@ -52,19 +58,25 @@
       animateTick(secondsElement, formatUnit(seconds));
 
       if (remainingMs <= 0) {
-        window.clearInterval(timerIntervalId);
+        if (timerIntervalId !== null) {
+          window.clearInterval(timerIntervalId);
+        }
+        if (typeof onEnded === "function") {
+          onEnded();
+        }
       }
     };
 
     renderCountdown();
-    const timerIntervalId = window.setInterval(renderCountdown, 1000);
+    timerIntervalId = window.setInterval(renderCountdown, 1000);
   };
-
-  initAuctionCountdown();
 
   const quickBidButtons = Array.from(
     document.querySelectorAll(".auction-bid-panel__quick-bid"),
   ).filter((button) => button instanceof HTMLButtonElement);
+  const bidPanel = document.querySelector(".auction-bid-panel");
+  const bidActions = document.querySelector(".auction-bid-panel__actions");
+  const bidCustom = document.querySelector(".auction-bid-panel__custom");
   const itemCardLink = document.querySelector(".auction-item-card");
   const placeBidButton = document.querySelector(".auction-bid-panel__cta");
   const customBidInput = document.getElementById("customBidAmount");
@@ -73,10 +85,13 @@
   const currentBidLabel = currentBidPanel?.querySelector(".auction-bid-panel__label");
   let bidAmountAnimationFrameId = null;
   let bidAmountHighlightTimeoutId = null;
+  let biddingEndedAmount = null;
+  let isBiddingClosed = false;
   const currentBidListeners = [];
 
   if (
     quickBidButtons.length === 0 ||
+    !(bidPanel instanceof HTMLElement) ||
     !(placeBidButton instanceof HTMLButtonElement) ||
     !(customBidInput instanceof HTMLInputElement) ||
     !(currentBidAmount instanceof HTMLElement) ||
@@ -103,6 +118,36 @@
 
   const setCustomBidInvalidState = (invalid) => {
     customBidInput.setAttribute("aria-invalid", invalid ? "true" : "false");
+  };
+
+  const closeBidding = () => {
+    if (isBiddingClosed) {
+      return;
+    }
+
+    isBiddingClosed = true;
+
+    if (bidActions instanceof HTMLElement) {
+      bidActions.remove();
+    }
+
+    if (bidCustom instanceof HTMLElement) {
+      bidCustom.remove();
+    }
+
+    if (placeBidButton instanceof HTMLButtonElement) {
+      placeBidButton.remove();
+    }
+
+    const endedBlock = document.createElement("div");
+    endedBlock.className = "auction-bid-panel__ended";
+    endedBlock.innerHTML = "<p class=\"auction-bid-panel__ended-title\">Bidding has ended</p>";
+    bidPanel.appendChild(endedBlock);
+
+    biddingEndedAmount = endedBlock.querySelector("#biddingEndedAmount");
+    if (biddingEndedAmount instanceof HTMLElement) {
+      biddingEndedAmount.textContent = currentBidAmount.textContent || "€ 0";
+    }
   };
 
   const prefersReducedMotion = window.matchMedia(
@@ -227,6 +272,11 @@
     parseCurrency(currentBidAmount.textContent || "");
 
   const syncPlaceBidButton = () => {
+    if (isBiddingClosed) {
+      placeBidButton.disabled = true;
+      return;
+    }
+
     placeBidButton.disabled = getActiveIncrement() <= 0;
   };
 
@@ -338,6 +388,10 @@
 
     highlightCurrentBidAmount();
     animateCurrentBidAmount(currentValue, nextValue);
+
+    if (biddingEndedAmount instanceof HTMLElement) {
+      biddingEndedAmount.textContent = formatCurrency(nextValue);
+    }
   };
 
   const startBidStream = () => {
@@ -397,5 +451,6 @@
 
   setSelectedButton(null);
   setCustomBidInvalidState(false);
+  initAuctionCountdown(closeBidding);
   startBidStream();
 })();
