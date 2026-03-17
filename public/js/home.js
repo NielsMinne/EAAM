@@ -37,7 +37,7 @@
 	};
 
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	const pageTransitionDurationMs = prefersReducedMotion ? 0 : 280;
+	const pageTransitionDurationMs = prefersReducedMotion ? 0 : 180;
 
 	const highlightCurrentBidAmount = () => {
 		if (bidAmountHighlightTimeoutId !== null) {

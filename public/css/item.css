@@ -49,8 +49,8 @@ body:has(.auction-item-detail) main {
 	align-items: center;
 	position: relative;
 	z-index: 1;
-	transition: transform 0.28s ease, opacity 0.28s ease, filter 0.28s ease;
-	animation: itemPageEnter 0.3s ease;
+	transition: transform 0.18s ease, opacity 0.18s ease, filter 0.18s ease;
+	animation: itemPageEnter 0.2s ease;
 }
 
 body:has(.auction-item-detail) main::after {
@@ -60,7 +60,7 @@ body:has(.auction-item-detail) main::after {
 	pointer-events: none;
 	background: linear-gradient(140deg, rgba(247, 251, 254, 0.12) 0%, rgba(235, 242, 247, 0.48) 100%);
 	opacity: 0;
-	transition: opacity 0.28s ease;
+	transition: opacity 0.18s ease;
 	z-index: 2;
 }
 

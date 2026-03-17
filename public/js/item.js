@@ -5,7 +5,7 @@
 	}
 
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	const transitionDurationMs = prefersReducedMotion ? 0 : 280;
+	const transitionDurationMs = prefersReducedMotion ? 0 : 180;
 	let isNavigating = false;
 
 	backLink.addEventListener("click", (event) => {
