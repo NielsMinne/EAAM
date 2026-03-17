@@ -116,6 +116,10 @@ body:has(.auction-home) main::after {
 
 body.auction-home--modal-open {
   overflow: hidden;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  right: 0;
 }
 
 body.auction-home--navigating main {
