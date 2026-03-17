@@ -14,6 +14,8 @@
 	const modalNewTotal = document.getElementById("modalNewTotal");
 	const confirmBidButton = document.getElementById("confirmBidButton");
 	const closeBidButton = bidConfirmModal?.querySelector("[data-bid-close]");
+	const successAudio = new Audio("/audio/success.mp3");
+	successAudio.preload = "auto";
 
 	if (
 		!(bidConfirmModal instanceof HTMLElement) ||
@@ -177,6 +179,10 @@
 			bidModalSurface.dataset.bidModalState = "success";
 			loadingContent.hidden = true;
 			successContent.hidden = false;
+			successAudio.currentTime = 0;
+			void successAudio.play().catch(() => {
+				// Ignore autoplay rejections when browser blocks non-user-gesture playback.
+			});
 
 			bidAcceptedTimeoutId = window.setTimeout(() => {
 				closeModal();
