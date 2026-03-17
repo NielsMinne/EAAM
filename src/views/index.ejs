@@ -1,103 +1,206 @@
-	<section class="auction-home" aria-labelledby="auctionTitle">
-	<header class="auction-home__header">
-		<p class="auction-home__kicker">EAAM Silent Auction</p>
-		<h1 id="auctionTitle" class="auction-home__title">Live Bidding Room</h1>
-	</header>
+<section class="auction-home" aria-labelledby="auctionTitle">
+  <header class="auction-home__header">
+    <p class="auction-home__kicker">EAAM Silent Auction</p>
+    <h1 id="auctionTitle" class="auction-home__title">Live Bidding Room</h1>
+  </header>
 
-	<div class="auction-home__grid">
-		<a href="/items/vacation-stay-for-2" class="auction-item-card" aria-label="View details for Luxury Vacation Stay for 2">
-			<div class="auction-item-card__media">
-				<img src="/images/paira-daiza.webp" alt="Preview of Luxury Vacation Stay for 2" class="auction-item-card__image">
-			</div>
+  <section
+    class="auction-countdown"
+    aria-label="Auction countdown"
+    aria-live="polite"
+  >
+    <div class="auction-countdown__grid" role="timer" aria-atomic="true">
+      <div class="auction-countdown__unit">
+        <span id="countdownDays" class="auction-countdown__value">05</span>
+        <span class="auction-countdown__label">Days</span>
+      </div>
+      <div class="auction-countdown__unit">
+        <span id="countdownHours" class="auction-countdown__value">00</span>
+        <span class="auction-countdown__label">Hours</span>
+      </div>
+      <div class="auction-countdown__unit">
+        <span id="countdownMinutes" class="auction-countdown__value">00</span>
+        <span class="auction-countdown__label">Minutes</span>
+      </div>
+      <div class="auction-countdown__unit">
+        <span id="countdownSeconds" class="auction-countdown__value">00</span>
+        <span class="auction-countdown__label">Seconds</span>
+      </div>
+    </div>
+  </section>
 
-			<div class="auction-item-card__content">
-				<p class="auction-item-card__label">Featured lot</p>
-				<h2 class="auction-item-card__title">Luxury Vacation Stay for 2</h2>
-				<p class="auction-item-card__description">
-					3 nights, breakfast included, plus a sunset boat tour.
-				</p>
-				<span class="auction-item-card__link">View details</span>
-			</div>
-		</a>
+  <div class="auction-home__grid">
+    <a
+      href="/items/vacation-stay-for-2"
+      class="auction-item-card"
+      aria-label="View details for Luxury Vacation Stay for 2"
+    >
+      <div class="auction-item-card__media">
+        <img
+          src="/images/paira-daiza.webp"
+          alt="Preview of Luxury Vacation Stay for 2"
+          class="auction-item-card__image"
+        />
+      </div>
 
-		<aside class="auction-bid-panel" aria-label="Quick bidding controls">
-			<div class="auction-bid-panel__current" aria-live="polite">
-				<p class="auction-bid-panel__label">Current highest bid</p>
-				<p id="currentBidAmount" class="auction-bid-panel__amount">€ 1,250</p>
-			</div>
+      <div class="auction-item-card__content">
+        <p class="auction-item-card__label">Featured lot</p>
+        <h2 class="auction-item-card__title">Luxury Vacation Stay for 2</h2>
+        <p class="auction-item-card__description">
+          3 nights, breakfast included, plus a sunset boat tour.
+        </p>
+        <span class="auction-item-card__link">View details</span>
+      </div>
+    </a>
 
-			<div class="auction-bid-panel__actions" role="group" aria-label="Quick add bid amounts">
-				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="25" aria-pressed="false">+ €25</button>
-				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="50" aria-pressed="false">+ €50</button>
-				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="100" aria-pressed="false">+ €100</button>
-				<button type="button" class="auction-bid-panel__quick-bid" data-bid-value="250" aria-pressed="false">+ €250</button>
-			</div>
+    <aside class="auction-bid-panel" aria-label="Quick bidding controls">
+      <div class="auction-bid-panel__current" aria-live="polite">
+        <p class="auction-bid-panel__label">Current highest bid</p>
+        <p id="currentBidAmount" class="auction-bid-panel__amount">€ 1,250</p>
+      </div>
 
-			<div class="auction-bid-panel__custom">
+      <div
+        class="auction-bid-panel__actions"
+        role="group"
+        aria-label="Quick add bid amounts"
+      >
+        <button
+          type="button"
+          class="auction-bid-panel__quick-bid"
+          data-bid-value="25"
+          aria-pressed="false"
+        >
+          + €25
+        </button>
+        <button
+          type="button"
+          class="auction-bid-panel__quick-bid"
+          data-bid-value="50"
+          aria-pressed="false"
+        >
+          + €50
+        </button>
+        <button
+          type="button"
+          class="auction-bid-panel__quick-bid"
+          data-bid-value="100"
+          aria-pressed="false"
+        >
+          + €100
+        </button>
+        <button
+          type="button"
+          class="auction-bid-panel__quick-bid"
+          data-bid-value="250"
+          aria-pressed="false"
+        >
+          + €250
+        </button>
+      </div>
 
-				<div class="auction-bid-panel__custom-field">
-					<span class="auction-bid-panel__custom-currency" aria-hidden="true">€</span>
-					<input
-						id="customBidAmount"
-						class="auction-bid-panel__custom-input"
-						type="number"
-						min="10"
-						step="1"
-						inputmode="numeric"
-						placeholder="Custom amount (€10 or more)"
-						aria-label="Custom bid amount in euros"
-					>
-				</div>
-			</div>
+      <div class="auction-bid-panel__custom">
+        <div class="auction-bid-panel__custom-field">
+          <span class="auction-bid-panel__custom-currency" aria-hidden="true"
+            >€</span
+          >
+          <input
+            id="customBidAmount"
+            class="auction-bid-panel__custom-input"
+            type="number"
+            min="10"
+            step="1"
+            inputmode="numeric"
+            placeholder="Custom amount (€10 or more)"
+            aria-label="Custom bid amount in euros"
+          />
+        </div>
+      </div>
 
-			<button type="button" class="auction-bid-panel__cta" disabled>Place Bid</button>
-		</aside>
-	</div>
+      <button type="button" class="auction-bid-panel__cta" disabled>
+        Place Bid
+      </button>
+    </aside>
+  </div>
 
-	<div id="bidConfirmModal" class="bid-modal" role="dialog" aria-modal="true" aria-labelledby="bidConfirmTitle" hidden>
-		<div class="bid-modal__surface" data-bid-modal-state="confirm">
-			<div class="bid-modal__content bid-modal__content--confirm">
-				<p class="bid-modal__kicker">Confirm bid</p>
-				<h2 id="bidConfirmTitle" class="bid-modal__title">Check your total before placing it</h2>
-				<div class="bid-modal__summary" aria-live="polite">
-					<div class="bid-modal__row">
-						<span class="bid-modal__label">Current price</span>
-						<span id="modalCurrentPrice" class="bid-modal__value">€ 1,250</span>
-					</div>
-					<div class="bid-modal__row">
-						<span class="bid-modal__label">You add</span>
-						<span id="modalBidIncrement" class="bid-modal__value">€ 0</span>
-					</div>
-					<div class="bid-modal__row bid-modal__row--total">
-						<span class="bid-modal__label">New total</span>
-						<span id="modalNewTotal" class="bid-modal__value">€ 1,250</span>
-					</div>
-				</div>
-				<div class="bid-modal__actions">
-					<button type="button" class="bid-modal__button bid-modal__button--secondary" data-bid-close>Cancel</button>
-					<button type="button" id="confirmBidButton" class="bid-modal__button bid-modal__button--primary">Confirm Bid</button>
-				</div>
-			</div>
+  <div
+    id="bidConfirmModal"
+    class="bid-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="bidConfirmTitle"
+    hidden
+  >
+    <div class="bid-modal__surface" data-bid-modal-state="confirm">
+      <div class="bid-modal__content bid-modal__content--confirm">
+        <p class="bid-modal__kicker">Confirm bid</p>
+        <h2 id="bidConfirmTitle" class="bid-modal__title">
+          Check your total before placing it
+        </h2>
+        <div class="bid-modal__summary" aria-live="polite">
+          <div class="bid-modal__row">
+            <span class="bid-modal__label">Current price</span>
+            <span id="modalCurrentPrice" class="bid-modal__value">€ 1,250</span>
+          </div>
+          <div class="bid-modal__row">
+            <span class="bid-modal__label">You add</span>
+            <span id="modalBidIncrement" class="bid-modal__value">€ 0</span>
+          </div>
+          <div class="bid-modal__row bid-modal__row--total">
+            <span class="bid-modal__label">New total</span>
+            <span id="modalNewTotal" class="bid-modal__value">€ 1,250</span>
+          </div>
+        </div>
+        <div class="bid-modal__actions">
+          <button
+            type="button"
+            class="bid-modal__button bid-modal__button--secondary"
+            data-bid-close
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            id="confirmBidButton"
+            class="bid-modal__button bid-modal__button--primary"
+          >
+            Confirm Bid
+          </button>
+        </div>
+      </div>
 
-			<div class="bid-modal__content bid-modal__content--loading" aria-live="polite" hidden>
-				<div class="bid-modal__loading-spinner" aria-hidden="true"></div>
-				<p class="bid-modal__kicker">Submitting bid</p>
-				<h2 class="bid-modal__title">Processing your bid...</h2>
-				<p class="bid-modal__success-copy">Please wait while we securely place your bid in the room.</p>
-			</div>
+      <div
+        class="bid-modal__content bid-modal__content--loading"
+        aria-live="polite"
+        hidden
+      >
+        <div class="bid-modal__loading-spinner" aria-hidden="true"></div>
+        <p class="bid-modal__kicker">Submitting bid</p>
+        <h2 class="bid-modal__title">Processing your bid...</h2>
+        <p class="bid-modal__success-copy">
+          Please wait while we securely place your bid in the room.
+        </p>
+      </div>
 
-			<div class="bid-modal__content bid-modal__content--success" aria-live="assertive" hidden>
-				<div class="bid-modal__success-mark" aria-hidden="true">
-					<span class="bid-modal__success-ring"></span>
-					<span class="bid-modal__success-check"></span>
-				</div>
-				<p class="bid-modal__kicker bid-modal__kicker--success">Bid accepted</p>
-				<h2 class="bid-modal__title bid-modal__title--success">Your bid has been accepted</h2>
-				<p class="bid-modal__success-copy">Your new highest bid is now being shown in the room.</p>
-			</div>
-		</div>
-	</div>
-	</section>
+      <div
+        class="bid-modal__content bid-modal__content--success"
+        aria-live="assertive"
+        hidden
+      >
+        <div class="bid-modal__success-mark" aria-hidden="true">
+          <span class="bid-modal__success-ring"></span>
+          <span class="bid-modal__success-check"></span>
+        </div>
+        <p class="bid-modal__kicker bid-modal__kicker--success">Bid accepted</p>
+        <h2 class="bid-modal__title bid-modal__title--success">
+          Your bid has been accepted
+        </h2>
+        <p class="bid-modal__success-copy">
+          Your new highest bid is now being shown in the room.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <script src="/js/home.js" defer></script>
 <script src="/js/home-modal.js" defer></script>

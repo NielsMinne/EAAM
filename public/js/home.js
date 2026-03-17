@@ -1,216 +1,286 @@
 (() => {
-	const quickBidButtons = Array.from(
-		document.querySelectorAll(".auction-bid-panel__quick-bid")
-	).filter((button) => button instanceof HTMLButtonElement);
-	const itemCardLink = document.querySelector(".auction-item-card");
-	const placeBidButton = document.querySelector(".auction-bid-panel__cta");
-	const customBidInput = document.getElementById("customBidAmount");
-	const currentBidAmount = document.getElementById("currentBidAmount");
-	let bidAmountAnimationFrameId = null;
-	let bidAmountHighlightTimeoutId = null;
+  const initAuctionCountdown = () => {
+    const daysElement = document.getElementById("countdownDays");
+    const hoursElement = document.getElementById("countdownHours");
+    const minutesElement = document.getElementById("countdownMinutes");
+    const secondsElement = document.getElementById("countdownSeconds");
 
-	if (
-		quickBidButtons.length === 0 ||
-		!(placeBidButton instanceof HTMLButtonElement) ||
-		!(customBidInput instanceof HTMLInputElement) ||
-		!(currentBidAmount instanceof HTMLElement)
-	) {
-		return;
-	}
+    if (
+      !(daysElement instanceof HTMLElement) ||
+      !(hoursElement instanceof HTMLElement) ||
+      !(minutesElement instanceof HTMLElement) ||
+      !(secondsElement instanceof HTMLElement)
+    ) {
+      return;
+    }
 
-	const formatCurrency = (value) => new Intl.NumberFormat("nl-NL", {
-		style: "currency",
-		currency: "EUR",
-		maximumFractionDigits: 0
-	}).format(value);
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const targetTime = Date.now() + 5 * 24 * 60 * 60 * 1000;
 
-	const minimumCustomBid = 10;
-	let isNavigatingToItem = false;
+    const animateTick = (element, nextValue) => {
+      if (element.textContent === nextValue) {
+        return;
+      }
 
-	const parseCurrency = (value) => {
-		const digits = value.replace(/[^\d]/g, "");
-		return digits ? Number.parseInt(digits, 10) : 0;
-	};
+      element.textContent = nextValue;
 
-	const setCustomBidInvalidState = (invalid) => {
-		customBidInput.setAttribute("aria-invalid", invalid ? "true" : "false");
-	};
+      if (prefersReducedMotion) {
+        return;
+      }
 
-	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	const pageTransitionDurationMs = prefersReducedMotion ? 0 : 180;
+      element.classList.remove("auction-countdown__value--tick");
+      void element.offsetWidth;
+      element.classList.add("auction-countdown__value--tick");
+    };
 
-	const highlightCurrentBidAmount = () => {
-		if (bidAmountHighlightTimeoutId !== null) {
-			window.clearTimeout(bidAmountHighlightTimeoutId);
-			bidAmountHighlightTimeoutId = null;
-		}
+    const formatUnit = (value) => String(value).padStart(2, "0");
 
-		currentBidAmount.classList.remove("auction-bid-panel__amount--updating");
-		void currentBidAmount.offsetWidth;
-		currentBidAmount.classList.add("auction-bid-panel__amount--updating");
+    const renderCountdown = () => {
+      const remainingMs = Math.max(targetTime - Date.now(), 0);
+      const remainingSeconds = Math.floor(remainingMs / 1000);
 
-		bidAmountHighlightTimeoutId = window.setTimeout(() => {
-			currentBidAmount.classList.remove("auction-bid-panel__amount--updating");
-			bidAmountHighlightTimeoutId = null;
-		}, 1300);
-	};
+      const days = Math.floor(remainingSeconds / 86400);
+      const hours = Math.floor((remainingSeconds % 86400) / 3600);
+      const minutes = Math.floor((remainingSeconds % 3600) / 60);
+      const seconds = remainingSeconds % 60;
 
-	const animateCurrentBidAmount = (fromValue, toValue) => {
-		if (bidAmountAnimationFrameId !== null) {
-			window.cancelAnimationFrame(bidAmountAnimationFrameId);
-			bidAmountAnimationFrameId = null;
-		}
+      animateTick(daysElement, formatUnit(days));
+      animateTick(hoursElement, formatUnit(hours));
+      animateTick(minutesElement, formatUnit(minutes));
+      animateTick(secondsElement, formatUnit(seconds));
 
-		if (prefersReducedMotion || toValue <= fromValue) {
-			currentBidAmount.textContent = formatCurrency(toValue);
-			return;
-		}
+      if (remainingMs <= 0) {
+        window.clearInterval(timerIntervalId);
+      }
+    };
 
-		const durationMs = 850;
-		let startTime = null;
+    renderCountdown();
+    const timerIntervalId = window.setInterval(renderCountdown, 1000);
+  };
 
-		const step = (timestamp) => {
-			if (startTime === null) {
-				startTime = timestamp;
-			}
+  initAuctionCountdown();
 
-			const elapsed = timestamp - startTime;
-			const progress = Math.min(elapsed / durationMs, 1);
-			const easedProgress = 1 - Math.pow(1 - progress, 3);
-			const value = Math.round(fromValue + (toValue - fromValue) * easedProgress);
+  const quickBidButtons = Array.from(
+    document.querySelectorAll(".auction-bid-panel__quick-bid"),
+  ).filter((button) => button instanceof HTMLButtonElement);
+  const itemCardLink = document.querySelector(".auction-item-card");
+  const placeBidButton = document.querySelector(".auction-bid-panel__cta");
+  const customBidInput = document.getElementById("customBidAmount");
+  const currentBidAmount = document.getElementById("currentBidAmount");
+  let bidAmountAnimationFrameId = null;
+  let bidAmountHighlightTimeoutId = null;
 
-			currentBidAmount.textContent = formatCurrency(value);
+  if (
+    quickBidButtons.length === 0 ||
+    !(placeBidButton instanceof HTMLButtonElement) ||
+    !(customBidInput instanceof HTMLInputElement) ||
+    !(currentBidAmount instanceof HTMLElement)
+  ) {
+    return;
+  }
 
-			if (progress < 1) {
-				bidAmountAnimationFrameId = window.requestAnimationFrame(step);
-				return;
-			}
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("nl-NL", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0,
+    }).format(value);
 
-			currentBidAmount.textContent = formatCurrency(toValue);
-			bidAmountAnimationFrameId = null;
-		};
+  const minimumCustomBid = 10;
+  let isNavigatingToItem = false;
 
-		bidAmountAnimationFrameId = window.requestAnimationFrame(step);
-	};
+  const parseCurrency = (value) => {
+    const digits = value.replace(/[^\d]/g, "");
+    return digits ? Number.parseInt(digits, 10) : 0;
+  };
 
-	const getSelectedButton = () => quickBidButtons.find(
-		(button) => button.getAttribute("aria-pressed") === "true"
-	) || null;
+  const setCustomBidInvalidState = (invalid) => {
+    customBidInput.setAttribute("aria-invalid", invalid ? "true" : "false");
+  };
 
-	const getCustomIncrement = () => {
-		const rawValue = customBidInput.value.trim();
-		if (!rawValue) {
-			setCustomBidInvalidState(false);
-			return 0;
-		}
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  const pageTransitionDurationMs = prefersReducedMotion ? 0 : 180;
 
-		const parsedValue = Number.parseInt(rawValue, 10);
-		if (Number.isNaN(parsedValue) || parsedValue < minimumCustomBid) {
-			setCustomBidInvalidState(true);
-			return 0;
-		}
+  const highlightCurrentBidAmount = () => {
+    if (bidAmountHighlightTimeoutId !== null) {
+      window.clearTimeout(bidAmountHighlightTimeoutId);
+      bidAmountHighlightTimeoutId = null;
+    }
 
-		setCustomBidInvalidState(false);
-		return parsedValue;
-	};
+    currentBidAmount.classList.remove("auction-bid-panel__amount--updating");
+    void currentBidAmount.offsetWidth;
+    currentBidAmount.classList.add("auction-bid-panel__amount--updating");
 
-	const getActiveIncrement = () => {
-		const selectedButton = getSelectedButton();
-		if (selectedButton) {
-			const value = selectedButton.dataset.bidValue;
-			return value ? Number.parseInt(value, 10) : 0;
-		}
+    bidAmountHighlightTimeoutId = window.setTimeout(() => {
+      currentBidAmount.classList.remove("auction-bid-panel__amount--updating");
+      bidAmountHighlightTimeoutId = null;
+    }, 1300);
+  };
 
-		return getCustomIncrement();
-	};
+  const animateCurrentBidAmount = (fromValue, toValue) => {
+    if (bidAmountAnimationFrameId !== null) {
+      window.cancelAnimationFrame(bidAmountAnimationFrameId);
+      bidAmountAnimationFrameId = null;
+    }
 
-	const getCurrentBidValue = () => parseCurrency(currentBidAmount.textContent || "");
+    if (prefersReducedMotion || toValue <= fromValue) {
+      currentBidAmount.textContent = formatCurrency(toValue);
+      return;
+    }
 
-	const syncPlaceBidButton = () => {
-		placeBidButton.disabled = getActiveIncrement() <= 0;
-	};
+    const durationMs = 850;
+    let startTime = null;
 
-	const setSelectedButton = (selectedButton) => {
-		for (const button of quickBidButtons) {
-			const isSelected = button === selectedButton;
-			button.setAttribute("aria-pressed", isSelected ? "true" : "false");
-		}
+    const step = (timestamp) => {
+      if (startTime === null) {
+        startTime = timestamp;
+      }
 
-		syncPlaceBidButton();
-	};
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / durationMs, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(
+        fromValue + (toValue - fromValue) * easedProgress,
+      );
 
-	for (const button of quickBidButtons) {
-		button.addEventListener("click", () => {
-			const isSelected = button.getAttribute("aria-pressed") === "true";
-			customBidInput.value = "";
-			setCustomBidInvalidState(false);
-			setSelectedButton(isSelected ? null : button);
-		});
-	}
+      currentBidAmount.textContent = formatCurrency(value);
 
-	if (itemCardLink instanceof HTMLAnchorElement) {
-		itemCardLink.addEventListener("click", (event) => {
-			if (
-				event.defaultPrevented ||
-				event.button !== 0 ||
-				event.metaKey ||
-				event.ctrlKey ||
-				event.shiftKey ||
-				event.altKey ||
-				itemCardLink.target === "_blank" ||
-				isNavigatingToItem
-			) {
-				return;
-			}
+      if (progress < 1) {
+        bidAmountAnimationFrameId = window.requestAnimationFrame(step);
+        return;
+      }
 
-			event.preventDefault();
-			isNavigatingToItem = true;
-			document.body.classList.add("auction-home--navigating");
+      currentBidAmount.textContent = formatCurrency(toValue);
+      bidAmountAnimationFrameId = null;
+    };
 
-			window.setTimeout(() => {
-				window.location.href = itemCardLink.href;
-			}, pageTransitionDurationMs);
-		});
-	}
+    bidAmountAnimationFrameId = window.requestAnimationFrame(step);
+  };
 
-	customBidInput.addEventListener("input", () => {
-		setSelectedButton(null);
-		syncPlaceBidButton();
-	});
+  const getSelectedButton = () =>
+    quickBidButtons.find(
+      (button) => button.getAttribute("aria-pressed") === "true",
+    ) || null;
 
-	const clearBidControls = () => {
-		setSelectedButton(null);
-		customBidInput.value = "";
-		setCustomBidInvalidState(false);
-		syncPlaceBidButton();
-	};
+  const getCustomIncrement = () => {
+    const rawValue = customBidInput.value.trim();
+    if (!rawValue) {
+      setCustomBidInvalidState(false);
+      return 0;
+    }
 
-	const cancelBidAnimations = () => {
-		if (bidAmountHighlightTimeoutId !== null) {
-			window.clearTimeout(bidAmountHighlightTimeoutId);
-			bidAmountHighlightTimeoutId = null;
-		}
+    const parsedValue = Number.parseInt(rawValue, 10);
+    if (Number.isNaN(parsedValue) || parsedValue < minimumCustomBid) {
+      setCustomBidInvalidState(true);
+      return 0;
+    }
 
-		if (bidAmountAnimationFrameId !== null) {
-			window.cancelAnimationFrame(bidAmountAnimationFrameId);
-			bidAmountAnimationFrameId = null;
-		}
-	};
+    setCustomBidInvalidState(false);
+    return parsedValue;
+  };
 
-	window.homeBidPage = {
-		placeBidButton,
-		formatCurrency,
-		getActiveIncrement,
-		getCurrentBidValue,
-		setCurrentBidValue: (value) => {
-			currentBidAmount.textContent = formatCurrency(value);
-		},
-		highlightCurrentBidAmount,
-		animateCurrentBidAmount,
-		clearBidControls,
-		cancelBidAnimations
-	};
+  const getActiveIncrement = () => {
+    const selectedButton = getSelectedButton();
+    if (selectedButton) {
+      const value = selectedButton.dataset.bidValue;
+      return value ? Number.parseInt(value, 10) : 0;
+    }
 
-	setSelectedButton(null);
-	setCustomBidInvalidState(false);
+    return getCustomIncrement();
+  };
+
+  const getCurrentBidValue = () =>
+    parseCurrency(currentBidAmount.textContent || "");
+
+  const syncPlaceBidButton = () => {
+    placeBidButton.disabled = getActiveIncrement() <= 0;
+  };
+
+  const setSelectedButton = (selectedButton) => {
+    for (const button of quickBidButtons) {
+      const isSelected = button === selectedButton;
+      button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+    }
+
+    syncPlaceBidButton();
+  };
+
+  for (const button of quickBidButtons) {
+    button.addEventListener("click", () => {
+      const isSelected = button.getAttribute("aria-pressed") === "true";
+      customBidInput.value = "";
+      setCustomBidInvalidState(false);
+      setSelectedButton(isSelected ? null : button);
+    });
+  }
+
+  if (itemCardLink instanceof HTMLAnchorElement) {
+    itemCardLink.addEventListener("click", (event) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey ||
+        itemCardLink.target === "_blank" ||
+        isNavigatingToItem
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      isNavigatingToItem = true;
+      document.body.classList.add("auction-home--navigating");
+
+      window.setTimeout(() => {
+        window.location.href = itemCardLink.href;
+      }, pageTransitionDurationMs);
+    });
+  }
+
+  customBidInput.addEventListener("input", () => {
+    setSelectedButton(null);
+    syncPlaceBidButton();
+  });
+
+  const clearBidControls = () => {
+    setSelectedButton(null);
+    customBidInput.value = "";
+    setCustomBidInvalidState(false);
+    syncPlaceBidButton();
+  };
+
+  const cancelBidAnimations = () => {
+    if (bidAmountHighlightTimeoutId !== null) {
+      window.clearTimeout(bidAmountHighlightTimeoutId);
+      bidAmountHighlightTimeoutId = null;
+    }
+
+    if (bidAmountAnimationFrameId !== null) {
+      window.cancelAnimationFrame(bidAmountAnimationFrameId);
+      bidAmountAnimationFrameId = null;
+    }
+  };
+
+  window.homeBidPage = {
+    placeBidButton,
+    formatCurrency,
+    getActiveIncrement,
+    getCurrentBidValue,
+    setCurrentBidValue: (value) => {
+      currentBidAmount.textContent = formatCurrency(value);
+    },
+    highlightCurrentBidAmount,
+    animateCurrentBidAmount,
+    clearBidControls,
+    cancelBidAnimations,
+  };
+
+  setSelectedButton(null);
+  setCustomBidInvalidState(false);
 })();
