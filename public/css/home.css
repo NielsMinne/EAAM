@@ -105,7 +105,7 @@ body.auction-home--navigating main::after {
 
 .auction-home__grid {
 	display: grid;
-	gap: 1rem;
+	gap: .5rem;
 	min-height: 0;
 	align-content: center;
 }
@@ -205,7 +205,7 @@ body.auction-home--navigating main::after {
 	font-family: "Fraunces", Georgia, serif;
 	font-size: var(--font-size-lg);
 	line-height: 1.15;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 .auction-item-card__description {
@@ -716,7 +716,7 @@ body.auction-home--navigating main::after {
 	.auction-home {
 		grid-template-rows: auto auto;
 		align-content: start;
-		gap: 0.9rem;
+		gap: 0;
 	}
 
 	.auction-home__header {
