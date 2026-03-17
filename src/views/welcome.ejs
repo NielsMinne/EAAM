@@ -1,68 +1,74 @@
 <!DOCTYPE html>
 <html lang="nl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/test.css">
-</head>
-<body class="welcome-body">
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/test.css" />
+  </head>
+  <body class="welcome-body">
     <div class="welcome-orb orb-a" aria-hidden="true"></div>
     <div class="welcome-orb orb-b" aria-hidden="true"></div>
 
     <div class="bubble-field" aria-hidden="true">
-        <span class="bubble"></span>
-        <span class="bubble"></span>
-        <span class="bubble"></span>
-        <span class="bubble"></span>
-        <span class="bubble"></span>
+      <span class="bubble"></span>
+      <span class="bubble"></span>
+      <span class="bubble"></span>
+      <span class="bubble"></span>
+      <span class="bubble"></span>
     </div>
 
     <main class="welcome-shell">
-        <h1 class="welcome-title">Welcome to EAAM Silent Auction</h1>
-        <p class="welcome-subtitle">Bidding excitement is loading...</p>
+      <img src="/images/logo.svg" alt="EAAM logo" class="welcome-logo" />
+      <h1 class="welcome-title">Welcome to EAAM Silent Auction</h1>
+      <p class="welcome-subtitle">Bidding excitement is loading...</p>
     </main>
 
     <script>
-        function readCookie(name) {
-            var target = name + "=";
-            var parts = document.cookie ? document.cookie.split("; ") : [];
+      function readCookie(name) {
+        var target = name + "=";
+        var parts = document.cookie ? document.cookie.split("; ") : [];
 
-            for (var i = 0; i < parts.length; i += 1) {
-                if (parts[i].indexOf(target) === 0) {
-                    return parts[i].substring(target.length);
-                }
-            }
+        for (var i = 0; i < parts.length; i += 1) {
+          if (parts[i].indexOf(target) === 0) {
+            return parts[i].substring(target.length);
+          }
+        }
 
+        return null;
+      }
+
+      function getRegistrationFromCookie() {
+        try {
+          var raw = readCookie("eaamRegistration");
+          if (!raw) {
             return null;
+          }
+
+          var parsed = JSON.parse(decodeURIComponent(raw));
+          if (
+            !parsed ||
+            !parsed.firstName ||
+            !parsed.lastName ||
+            !parsed.email
+          ) {
+            return null;
+          }
+
+          return parsed;
+        } catch (error) {
+          return null;
         }
+      }
 
-        function getRegistrationFromCookie() {
-            try {
-                var raw = readCookie("eaamRegistration");
-                if (!raw) {
-                    return null;
-                }
+      function hasRegistration() {
+        return Boolean(getRegistrationFromCookie());
+      }
 
-                var parsed = JSON.parse(decodeURIComponent(raw));
-                if (!parsed || !parsed.firstName || !parsed.lastName || !parsed.email) {
-                    return null;
-                }
-
-                return parsed;
-            } catch (error) {
-                return null;
-            }
-        }
-
-        function hasRegistration() {
-            return Boolean(getRegistrationFromCookie());
-        }
-
-        window.setTimeout(function () {
-            window.location.href = hasRegistration() ? "/home" : "/register";
-        }, 3200);
+      window.setTimeout(function () {
+        window.location.href = hasRegistration() ? "/home" : "/register";
+      }, 3200);
     </script>
-</body>
+  </body>
 </html>
