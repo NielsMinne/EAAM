@@ -87,7 +87,10 @@
   let bidAmountHighlightTimeoutId = null;
   let biddingEndedAmount = null;
   let isBiddingClosed = false;
+  let hasReceivedFirstBidState = false;
   const currentBidListeners = [];
+  const changedAudio = new Audio("/audio/changed.mp3");
+  changedAudio.preload = "auto";
 
   if (
     quickBidButtons.length === 0 ||
@@ -382,8 +385,26 @@
     }
 
     const currentValue = getCurrentBidValue();
+    const shouldPlayChangeSound = hasReceivedFirstBidState;
+
+    if (!hasReceivedFirstBidState) {
+      hasReceivedFirstBidState = true;
+    }
+
     if (nextValue === currentValue) {
       return;
+    }
+
+    if (shouldPlayChangeSound) {
+      const bidModal = document.getElementById("bidConfirmModal");
+      const isBidModalOpen = bidModal instanceof HTMLElement && !bidModal.hidden;
+
+      if (!isBidModalOpen) {
+        changedAudio.currentTime = 0;
+        void changedAudio.play().catch(() => {
+          // Ignore autoplay rejections when browser blocks non-user-gesture playback.
+        });
+      }
     }
 
     highlightCurrentBidAmount();
