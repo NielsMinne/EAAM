@@ -18,7 +18,7 @@
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const now = new Date();
-    const targetDate = new Date(now.getFullYear(), 2, 28, 18, 0, 0, 0);
+    const targetDate = new Date(now.getFullYear(), 2, 27, 13, 0, 0, 0);
     if (targetDate.getTime() <= now.getTime()) {
       targetDate.setFullYear(targetDate.getFullYear() + 1);
     }

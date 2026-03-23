@@ -38,7 +38,7 @@ export const renderHome = async (req: Request, res: Response): Promise<void> => 
 
     res.render("index", {
       title: "EAAM - Home",
-      currentHighestBid: formatEuro(100),
+      currentHighestBid: formatEuro(50),
       isCurrentHighestBidder: false
     });
   }

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { BidderCookiePayload } from "./bidder-auth-service";
 dotenv.config();
 
-const STARTING_BID_AMOUNT = 100;
+const STARTING_BID_AMOUNT = 50;
 
 export interface CurrentBidState {
   currentHighestBid: number;

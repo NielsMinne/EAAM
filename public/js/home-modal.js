@@ -24,14 +24,6 @@
   const changedAudio = new Audio("/audio/changed.mp3");
   successAudio.preload = "auto";
   changedAudio.preload = "auto";
-  
-  // Attempt to play silently to unlock audio context for future plays
-  successAudio.volume = 0;
-  changedAudio.volume = 0;
-  void successAudio.play().catch(() => {});
-  void changedAudio.play().catch(() => {});
-  successAudio.volume = 1;
-  changedAudio.volume = 1;
 
   if (
     !(bidConfirmModal instanceof HTMLElement) ||

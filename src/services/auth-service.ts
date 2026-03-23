@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import dotenv from "dotenv";
+dotenv.config();
 
 const ADMIN_COOKIE_NAME = "eaamAdminAuth";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "eaam-admin";
