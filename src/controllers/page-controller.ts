@@ -11,7 +11,7 @@ const formatEuro = (value: number): string =>
   }).format(value);
 
 export const renderWelcome = (_req: Request, res: Response): void => {
-  res.render("welcome", { title: "EAAM - Welkom" });
+  res.render("welcome", { title: "EAAM - Welcome" });
 };
 
 export const renderRegister = (_req: Request, res: Response): void => {
