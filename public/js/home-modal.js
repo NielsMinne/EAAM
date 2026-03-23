@@ -24,6 +24,7 @@
   const changedAudio = new Audio("/audio/changed.mp3");
   successAudio.preload = "auto";
   changedAudio.preload = "auto";
+  changedAudio.volume = 0.7;
 
   if (
     !(bidConfirmModal instanceof HTMLElement) ||

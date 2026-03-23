@@ -91,6 +91,7 @@
   const currentBidListeners = [];
   const changedAudio = new Audio("/audio/changed.mp3");
   changedAudio.preload = "auto";
+  changedAudio.volume = 0.7;
 
   if (
     quickBidButtons.length === 0 ||
