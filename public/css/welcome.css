@@ -1,5 +1,5 @@
 body.welcome-body {
-  min-height: 100vh;
+  min-height: 100dvh;
   height: 100dvh;
   display: grid;
   place-items: center;
@@ -20,16 +20,18 @@ body.welcome-body {
 }
 
 .welcome-shell {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   z-index: 2;
   margin: 0;
   width: min(92vw, 760px);
+  max-width: 760px;
   padding: 0 1.25rem;
   display: grid;
+  place-items: center;
   justify-items: center;
+  justify-self: center;
+  align-self: center;
+  margin-inline: auto;
   gap: 0.55rem;
   text-align: center;
 }
@@ -41,7 +43,7 @@ body.welcome-body {
   filter: drop-shadow(0 14px 28px rgba(17, 74, 108, 0.18));
   opacity: 0;
   transform: translateY(18px) scale(0.9);
-  animation: welcomeLogoReveal 3.1s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
+  animation: welcomeLogoReveal 3.8s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
 }
 
 .welcome-title {
@@ -58,7 +60,7 @@ body.welcome-body {
   text-shadow: 0 8px 22px rgba(17, 74, 108, 0.18);
   opacity: 0;
   transform: translateY(16px) scale(0.96);
-  animation: welcomeReveal 3.1s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
+  animation: welcomeReveal 3.8s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
 }
 
 .welcome-title::after {
@@ -86,7 +88,7 @@ body.welcome-body {
   letter-spacing: 0.03em;
   opacity: 0;
   transform: translateY(6px);
-  animation: subtitleReveal 2.6s ease 0.4s forwards;
+  animation: subtitleReveal 3.2s ease 0.45s forwards;
 }
 
 .welcome-orb {
@@ -260,7 +262,7 @@ body.welcome-body {
     opacity: 0.9;
   }
   100% {
-    transform: translateY(-115vh) translateX(18px) scale(1.2);
+    transform: translateY(-115dvh) translateX(18px) scale(1.2);
     opacity: 0;
   }
 }

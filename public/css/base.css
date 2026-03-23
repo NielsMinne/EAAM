@@ -101,10 +101,10 @@ button:hover {
 
 @media (max-width: 767px) {
 	:root {
-		--font-size-xs: 0.66rem;
-		--font-size-base: 0.76rem;
-		--font-size-md: 0.9rem;
-		--font-size-lg: 1rem;
+		--font-size-xs: 0.75rem;
+		--font-size-base: 0.88rem;
+		--font-size-md: 1.02rem;
+		--font-size-lg: 1.12rem;
 		--font-size-xl: 1.8rem;
 	}
 }
