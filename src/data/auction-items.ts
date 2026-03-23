@@ -13,26 +13,25 @@ export type AuctionItem = {
 };
 
 export const auctionItems: Record<string, AuctionItem> = {
-  "vacation-stay-for-2": {
-    slug: "vacation-stay-for-2",
-    title: "Luxury Vacation Stay for 2",
-    label: "Featured lot",
-    image: "/images/paira-daiza.webp",
-    currentBid: "EUR 1,250",
-    minimumIncrement: "EUR 25",
+  "tapir-plush": {
+    slug: "tapir-plush",
+    title: "Tapir Plush",
+    label: "Charity prize",
+    image: "/images/tapir.png",
+    currentBid: "EUR 75",
+    minimumIncrement: "EUR 5",
     closesIn: "6h 42m",
-    location: "Amalfi Coast, Italy",
+    location: "EAAM Charity Auction",
     description:
-      "Escape to a boutique cliffside retreat with three nights in a panoramic suite, daily breakfast, and a private sunset boat tour included.",
+      "Bid to win an adorable tapir plush. Every euro raised goes to a good cause supporting animal care and conservation.",
     highlights: [
-      "3 nights in a sea-view junior suite",
-      "Sunset private boat experience",
-      "Breakfast and airport pickup included"
+      "Soft and huggable tapir plush",
+      "A sweet gift for wildlife lovers",
+      "100% of proceeds go to a good cause"
     ],
     includes: [
-      "Flexible travel window in 2026",
-      "Valid for two adults",
-      "No blackout dates in September"
+      "One tapir plush",
+      "Pickup right after auction close"
     ]
   }
 };
