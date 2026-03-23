@@ -408,7 +408,6 @@
         }
 
         const payload = await response.json();
-        console.log(payload);
         const value = typeof payload?.currentHighestBid === "number"
           ? payload.currentHighestBid
           : Number(payload?.currentHighestBid);

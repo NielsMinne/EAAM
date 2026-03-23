@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { hasAdminAuth, isValidAdminPassword, setAdminAuthCookie } from "../services/auth-service";
 import { getAdminDashboardData } from "../services/admin-bid-service";
 
-export const renderAdminDashboardOrLogin = (req: Request, res: Response): void => {
+export const renderAdminDashboardOrLogin = async (req: Request, res: Response): Promise<void> => {
   if (!hasAdminAuth(req)) {
     res.render("admin-login", {
       title: "EAAM - Admin Login",
@@ -11,13 +11,21 @@ export const renderAdminDashboardOrLogin = (req: Request, res: Response): void =
     return;
   }
 
-  const rawPage = typeof req.query.page === "string" ? req.query.page : undefined;
-  const dashboardData = getAdminDashboardData(rawPage);
+  try {
+    const rawPage = typeof req.query.page === "string" ? req.query.page : undefined;
+    const dashboardData = await getAdminDashboardData(rawPage);
 
-  res.render("admin", {
-    title: "EAAM - Admin Dashboard",
-    ...dashboardData
-  });
+    res.render("admin", {
+      title: "EAAM - Admin Dashboard",
+      ...dashboardData
+    });
+  } catch (error) {
+    console.error("Error rendering admin dashboard:", error);
+    res.status(500).render("admin-login", {
+      title: "EAAM - Admin Login",
+      error: "Error loading dashboard data. Please try again."
+    });
+  }
 };
 
 export const handleAdminLogin = (req: Request, res: Response): void => {

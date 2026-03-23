@@ -43,7 +43,7 @@ body.welcome-body {
   filter: drop-shadow(0 14px 28px rgba(17, 74, 108, 0.18));
   opacity: 0;
   transform: translateY(18px) scale(0.9);
-  animation: welcomeLogoReveal 3.8s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
+  animation: welcomeLogoReveal 5.2s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
 }
 
 .welcome-title {
@@ -60,7 +60,7 @@ body.welcome-body {
   text-shadow: 0 8px 22px rgba(17, 74, 108, 0.18);
   opacity: 0;
   transform: translateY(16px) scale(0.96);
-  animation: welcomeReveal 3.8s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
+  animation: welcomeReveal 5.2s cubic-bezier(0.24, 0.8, 0.24, 1) forwards;
 }
 
 .welcome-title::after {
@@ -88,7 +88,7 @@ body.welcome-body {
   letter-spacing: 0.03em;
   opacity: 0;
   transform: translateY(6px);
-  animation: subtitleReveal 3.2s ease 0.45s forwards;
+  animation: subtitleReveal 4.5s ease 0.45s forwards;
 }
 
 .welcome-orb {

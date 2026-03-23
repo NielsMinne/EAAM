@@ -21,7 +21,17 @@
   const confirmBidButton = document.getElementById("confirmBidButton");
   const closeBidButton = bidConfirmModal?.querySelector("[data-bid-close]");
   const successAudio = new Audio("/audio/success.mp3");
+  const changedAudio = new Audio("/audio/changed.mp3");
   successAudio.preload = "auto";
+  changedAudio.preload = "auto";
+  
+  // Attempt to play silently to unlock audio context for future plays
+  successAudio.volume = 0;
+  changedAudio.volume = 0;
+  void successAudio.play().catch(() => {});
+  void changedAudio.play().catch(() => {});
+  successAudio.volume = 1;
+  changedAudio.volume = 1;
 
   if (
     !(bidConfirmModal instanceof HTMLElement) ||
@@ -53,6 +63,12 @@
     element.classList.remove(pulseClass);
     void element.offsetWidth;
     element.classList.add(pulseClass);
+  };
+
+  const highlightValue = (element) => {
+    element.classList.remove("bid-modal__value--success-tint");
+    void element.offsetWidth;
+    element.classList.add("bid-modal__value--success-tint");
   };
 
   const setValueWithPulse = (element, value, pulseClass) => {
@@ -212,6 +228,10 @@
     homeBidPage.subscribeToCurrentBid(() => {
       if (!bidConfirmModal.hidden && bidModalSurface.dataset.bidModalState === "confirm") {
         updateModalSummary();
+        changedAudio.currentTime = 0;
+        void changedAudio.play().catch(() => {
+          // Ignore autoplay rejections when browser blocks non-user-gesture playback.
+        });
       }
     });
   }
@@ -259,6 +279,8 @@
       }
 
       bidLoadingTimeoutId = window.setTimeout(() => {
+        highlightValue(modalCurrentPrice);
+        highlightValue(modalNewTotal);
         homeBidPage.highlightCurrentBidAmount();
         homeBidPage.animateCurrentBidAmount(currentValue, serverCurrentHighestBid);
         bidModalSurface.dataset.bidModalState = "success";
