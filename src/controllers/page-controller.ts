@@ -29,7 +29,7 @@ export const renderHome = async (req: Request, res: Response): Promise<void> => 
     const bidState = await getCurrentBidState(bidderRegistration);
 
     res.render("index", {
-      title: "EAAM - Home",
+      title: "EAAM - Live Bidding Room",
       currentHighestBid: formatEuro(bidState.currentHighestBid),
       isCurrentHighestBidder: bidState.isCurrentHighestBidder
     });
@@ -37,7 +37,7 @@ export const renderHome = async (req: Request, res: Response): Promise<void> => 
     console.error("Failed to load highest bid:", error);
 
     res.render("index", {
-      title: "EAAM - Home",
+      title: "EAAM - Live Bidding Room",
       currentHighestBid: formatEuro(50),
       isCurrentHighestBidder: false
     });
@@ -49,7 +49,7 @@ export const renderItemDetail = (req: Request, res: Response): void => {
   const item = auctionItems[slug as string];
 
   if (!item) {
-    res.status(404).render("index", { title: "EAAM - Home" });
+    res.status(404).render("index", { title: "EAAM - Live Bidding Room" });
     return;
   }
 
