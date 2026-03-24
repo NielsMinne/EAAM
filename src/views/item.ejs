@@ -15,6 +15,16 @@
 				<p class="auction-item-showcase__location"><%= item.location %></p>
 				<p class="auction-item-showcase__description"><%= item.description %></p>
 
+				<section class="auction-item-showcase__impact" aria-label="EAAM conservation impact">
+					<h2 class="auction-item-showcase__impact-title"><%= item.impactTitle %></h2>
+					<p class="auction-item-showcase__impact-copy"><%= item.impactCopy %></p>
+					<ul class="auction-item-showcase__impact-points">
+						<% for (const point of item.impactPoints) { %>
+							<li><%= point %></li>
+						<% } %>
+					</ul>
+				</section>
+
 				<ul class="auction-item-showcase__highlights">
 					<% for (const highlight of item.highlights) { %>
 						<li><%= highlight %></li>
@@ -25,7 +35,7 @@
 
 		<aside class="auction-item-summary" aria-label="Auction status and package details">
 			<div class="auction-item-summary__card">
-				<h2 class="auction-item-summary__title">Prize details</h2>
+				<h2 class="auction-item-summary__title">Details</h2>
 				<ul class="auction-item-summary__includes">
 					<% for (const includeItem of item.includes) { %>
 						<li><%= includeItem %></li>

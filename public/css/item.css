@@ -181,6 +181,60 @@ body.auction-item--navigating main::after {
 	max-width: 56ch;
 }
 
+.auction-item-showcase__impact {
+	display: grid;
+	gap: 0.55rem;
+	padding: 0.85rem 0.9rem;
+	border: 1px solid #bdd5e4;
+	border-radius: 16px;
+	background:
+		radial-gradient(circle at 10% 14%, rgba(110, 168, 162, 0.22), transparent 55%),
+		linear-gradient(135deg, rgba(242, 250, 255, 0.96), rgba(236, 247, 250, 0.98));
+}
+
+.auction-item-showcase__impact-title {
+	margin: 0;
+	font-family: "Fraunces", Georgia, serif;
+	font-size: clamp(1.02rem, 0.94rem + 0.5vw, 1.28rem);
+	line-height: 1.2;
+	color: #104057;
+}
+
+.auction-item-showcase__impact-copy {
+	margin: 0;
+	color: #325a6f;
+	line-height: 1.55;
+	font-size: 0.95rem;
+}
+
+.auction-item-showcase__impact-points {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	gap: 0.42rem;
+}
+
+.auction-item-showcase__impact-points li {
+	position: relative;
+	padding-left: 1.1rem;
+	color: #244f66;
+	line-height: 1.45;
+	font-size: 0.93rem;
+}
+
+.auction-item-showcase__impact-points li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0.48rem;
+	width: 0.46rem;
+	height: 0.46rem;
+	border-radius: 999px;
+	background: linear-gradient(140deg, #2f8bc7, #4da99a);
+	box-shadow: 0 0 0 3px rgba(47, 139, 199, 0.14);
+}
+
 .auction-item-showcase__highlights {
 	margin: 0;
 	padding: 0;

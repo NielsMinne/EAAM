@@ -8,6 +8,9 @@ export type AuctionItem = {
   closesIn: string;
   location: string;
   description: string;
+  impactTitle: string;
+  impactCopy: string;
+  impactPoints: string[];
   highlights: string[];
   includes: string[];
 };
@@ -15,7 +18,7 @@ export type AuctionItem = {
 export const auctionItems: Record<string, AuctionItem> = {
   "tapir-plush": {
     slug: "tapir-plush",
-    title: "Tapir Plush",
+    title: "Marty The Tapir",
     label: "Charity prize",
     image: "/images/tapir.png",
     currentBid: "EUR 75",
@@ -23,11 +26,17 @@ export const auctionItems: Record<string, AuctionItem> = {
     closesIn: "6h 42m",
     location: "EAAM Charity Auction",
     description:
-      "Bid to win an adorable tapir plush. Every euro raised goes to a good cause supporting animal care and conservation.",
+      "Bid to win Marty The Tapir, an adorable plush. This EAAM auction item is dedicated to the welfare and long-term conservation of marine mammals.",
+    impactTitle: "How your bid helps marine mammals",
+    impactCopy:
+      "Net proceeds from this plush directly support EAAM conservation work for dolphins, porpoises, seals and other aquatic mammals in professional care and in the wild.",
+    impactPoints: [
+      "Supports veterinary care, rescue readiness and welfare programs in EAAM member parks",
+      "Funds education and outreach on marine mammal habitats, threats and conservation measures",
+      "Helps share scientific and medical knowledge across the EAAM network"
+    ],
     highlights: [
-      "Soft and huggable tapir plush",
-      "A sweet gift for wildlife lovers",
-      "100% of proceeds go to a good cause"
+     
     ],
     includes: [
       "One tapir plush",
