@@ -31,7 +31,6 @@ export const auctionItems: Record<string, AuctionItem> = {
     impactCopy:
       "Net proceeds from this plush directly support EAAM conservation work for dolphins, porpoises, seals and other aquatic mammals in professional care and in the wild.",
     impactPoints: [
-      "Supports veterinary care, rescue readiness and welfare programs in EAAM member parks",
       "Funds education and outreach on marine mammal habitats, threats and conservation measures",
       "Helps share scientific and medical knowledge across the EAAM network"
     ],
