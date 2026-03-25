@@ -417,34 +417,8 @@
   };
 
   const startBidStream = () => {
-    const pollCurrentBidState = async () => {
-      try {
-        const response = await fetch("/api/bids/current", {
-          headers: {
-            Accept: "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          return;
-        }
-
-        const payload = await response.json();
-        const value = typeof payload?.currentHighestBid === "number"
-          ? payload.currentHighestBid
-          : Number(payload?.currentHighestBid);
-        applyIncomingHighestBid(value);
-        setHighestBidderIndicator(Boolean(payload?.isCurrentHighestBidder));
-      } catch (error) {
-        // Ignore transient poll failures.
-      }
-    };
-
     if (!("EventSource" in window)) {
-      void pollCurrentBidState();
-      window.setInterval(() => {
-        void pollCurrentBidState();
-      }, 2500);
+      console.error("EventSource is not supported in this browser.");
       return;
     }
 
@@ -466,8 +440,6 @@
     eventSource.onerror = () => {
       // Let EventSource handle reconnect automatically.
     };
-
-    void pollCurrentBidState();
   };
 
   setSelectedButton(null);

@@ -1,6 +1,25 @@
 import { Request, Response } from "express";
 import { getBidderRegistration, hasBidderRegistration } from "../services/bidder-auth-service";
-import { getCurrentBidState, placeBidForBidderRegistration } from "../services/bidding-service";
+import {
+  CurrentBidSnapshot,
+  getCurrentBidSnapshot,
+  getCurrentBidState,
+  placeBidForBidderRegistration,
+  subscribeToBidChanges
+} from "../services/bidding-service";
+
+type BidStreamClient = {
+  id: number;
+  email: string | null;
+  lastHighestBid: number;
+  lastIsCurrentHighestBidder: boolean | null;
+  res: Response;
+};
+
+const bidStreamClients: Map<number, BidStreamClient> = new Map();
+let bidStreamClientId = 0;
+let bidChangeUnsubscribe: (() => void) | null = null;
+let heartbeatInterval: NodeJS.Timeout | null = null;
 
 const parseAmount = (value: unknown): number => {
   if (typeof value === "number") {
@@ -13,6 +32,80 @@ const parseAmount = (value: unknown): number => {
   }
 
   return NaN;
+};
+
+const normalizeEmail = (email?: string | null): string | null => {
+  if (typeof email !== "string") {
+    return null;
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  return normalizedEmail || null;
+};
+
+const buildBidStateForClient = (snapshot: CurrentBidSnapshot, email: string | null) => {
+  return {
+    currentHighestBid: snapshot.currentHighestBid,
+    isCurrentHighestBidder: Boolean(email && snapshot.latestBidderEmail && email === snapshot.latestBidderEmail)
+  };
+};
+
+const pushBidStateToClient = (client: BidStreamClient, snapshot: CurrentBidSnapshot): void => {
+  const bidState = buildBidStateForClient(snapshot, client.email);
+
+  if (
+    bidState.currentHighestBid === client.lastHighestBid &&
+    bidState.isCurrentHighestBidder === client.lastIsCurrentHighestBidder
+  ) {
+    return;
+  }
+
+  client.lastHighestBid = bidState.currentHighestBid;
+  client.lastIsCurrentHighestBidder = bidState.isCurrentHighestBidder;
+  client.res.write(`event: highestBid\ndata: ${JSON.stringify(bidState)}\n\n`);
+};
+
+const broadcastBidStateToClients = async (): Promise<void> => {
+  if (bidStreamClients.size === 0) {
+    return;
+  }
+
+  try {
+    const snapshot = await getCurrentBidSnapshot();
+    bidStreamClients.forEach((client) => {
+      pushBidStateToClient(client, snapshot);
+    });
+  } catch (error) {
+    console.error("Failed to broadcast highest bid:", error);
+  }
+};
+
+const startBidStreamRealtimeIfNeeded = (): void => {
+  if (!bidChangeUnsubscribe) {
+    bidChangeUnsubscribe = subscribeToBidChanges(() => {
+      void broadcastBidStateToClients();
+    });
+  }
+
+  if (!heartbeatInterval) {
+    heartbeatInterval = setInterval(() => {
+      bidStreamClients.forEach((client) => {
+        client.res.write(": heartbeat\n\n");
+      });
+    }, 15000);
+  }
+};
+
+const stopBidStreamRealtime = (): void => {
+  if (bidChangeUnsubscribe) {
+    bidChangeUnsubscribe();
+    bidChangeUnsubscribe = null;
+  }
+
+  if (heartbeatInterval) {
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
+  }
 };
 
 export const handleGetCurrentHighestBid = async (req: Request, res: Response): Promise<void> => {
@@ -59,40 +152,31 @@ export const handleBidStream = async (req: Request, res: Response): Promise<void
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders();
 
-  let lastHighestBid = -1;
-  let lastIsCurrentHighestBidder: boolean | null = null;
   const bidderRegistration = getBidderRegistration(req);
-
-  const pushHighestBid = async (): Promise<void> => {
-    try {
-      const bidState = await getCurrentBidState(bidderRegistration);
-      if (
-        bidState.currentHighestBid === lastHighestBid &&
-        bidState.isCurrentHighestBidder === lastIsCurrentHighestBidder
-      ) {
-        return;
-      }
-
-      lastHighestBid = bidState.currentHighestBid;
-      lastIsCurrentHighestBidder = bidState.isCurrentHighestBidder;
-      res.write(`event: highestBid\ndata: ${JSON.stringify(bidState)}\n\n`);
-    } catch (error) {
-      console.error("Failed to stream highest bid:", error);
-    }
+  const clientId = ++bidStreamClientId;
+  const client: BidStreamClient = {
+    id: clientId,
+    email: normalizeEmail(bidderRegistration?.email),
+    lastHighestBid: -1,
+    lastIsCurrentHighestBidder: null,
+    res
   };
 
-  await pushHighestBid();
+  bidStreamClients.set(clientId, client);
+  startBidStreamRealtimeIfNeeded();
 
-  const streamInterval = setInterval(() => {
-    void pushHighestBid();
-  }, 2000);
-
-  const heartbeatInterval = setInterval(() => {
-    res.write(": heartbeat\n\n");
-  }, 15000);
+  try {
+    const snapshot = await getCurrentBidSnapshot();
+    pushBidStateToClient(client, snapshot);
+  } catch (error) {
+    console.error("Failed to stream initial highest bid:", error);
+  }
 
   req.on("close", () => {
-    clearInterval(streamInterval);
-    clearInterval(heartbeatInterval);
+    bidStreamClients.delete(clientId);
+
+    if (bidStreamClients.size === 0) {
+      stopBidStreamRealtime();
+    }
   });
 };

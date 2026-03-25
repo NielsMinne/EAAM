@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient, RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
 import { BidderCookiePayload } from "./bidder-auth-service";
 dotenv.config();
@@ -10,7 +10,16 @@ export interface CurrentBidState {
   isCurrentHighestBidder: boolean;
 }
 
+export interface CurrentBidSnapshot {
+  currentHighestBid: number;
+  latestBidderEmail: string | null;
+}
+
+type BidChangeListener = () => void;
+
 let supabaseClient: SupabaseClient | null = null;
+let bidChangesChannel: RealtimeChannel | null = null;
+const bidChangeListeners: Set<BidChangeListener> = new Set();
 
 const getSupabaseClient = (): SupabaseClient => {
   const supabaseUrl = process.env.SUPABASE_URL;
@@ -25,6 +34,52 @@ const getSupabaseClient = (): SupabaseClient => {
   }
 
   return supabaseClient;
+};
+
+const notifyBidChangeListeners = (): void => {
+  bidChangeListeners.forEach((listener) => {
+    try {
+      listener();
+    } catch (error) {
+      console.error("Bid change listener failed:", error);
+    }
+  });
+};
+
+const ensureBidChangesSubscription = (): void => {
+  if (bidChangesChannel) {
+    return;
+  }
+
+  const client = getSupabaseClient();
+
+  bidChangesChannel = client
+    .channel("eaam-biddings-changes")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "biddings" },
+      (payload) => {
+        notifyBidChangeListeners();
+        console.log("Received bid change event:", payload);
+      }
+    );
+
+  bidChangesChannel.subscribe((status) => {
+    if (status === "SUBSCRIBED") {
+      console.log("Successfully subscribed to biddings changes!");
+    }
+
+    if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+      console.error("Supabase bid changes channel status:", status);
+      
+      // FIX: Clean up the dead channel so the next request attempts a fresh connection
+      const client = getSupabaseClient();
+      if (bidChangesChannel) {
+        void client.removeChannel(bidChangesChannel);
+      }
+      bidChangesChannel = null; 
+    }
+  });
 };
 
 const getBiddingsSum = async (): Promise<number> => {
@@ -184,11 +239,20 @@ export const getCurrentHighestBid = async (): Promise<number> => {
   return STARTING_BID_AMOUNT + biddingsSum;
 };
 
-export const getCurrentBidState = async (registration?: BidderCookiePayload | null): Promise<CurrentBidState> => {
+export const getCurrentBidSnapshot = async (): Promise<CurrentBidSnapshot> => {
   const [currentHighestBid, latestBidderEmail] = await Promise.all([
     getCurrentHighestBid(),
     getLatestBidderEmail()
   ]);
+
+  return {
+    currentHighestBid,
+    latestBidderEmail
+  };
+};
+
+export const getCurrentBidState = async (registration?: BidderCookiePayload | null): Promise<CurrentBidState> => {
+  const { currentHighestBid, latestBidderEmail } = await getCurrentBidSnapshot();
 
   if (!registration?.email || !latestBidderEmail) {
     return {
@@ -202,6 +266,25 @@ export const getCurrentBidState = async (registration?: BidderCookiePayload | nu
   return {
     currentHighestBid,
     isCurrentHighestBidder: cookieEmail === latestBidderEmail
+  };
+};
+
+export const subscribeToBidChanges = (listener: BidChangeListener): (() => void) => {
+  if (typeof listener !== "function") {
+    return () => {};
+  }
+
+  bidChangeListeners.add(listener);
+  ensureBidChangesSubscription();
+
+  return () => {
+    bidChangeListeners.delete(listener);
+
+    if (bidChangeListeners.size === 0 && bidChangesChannel) {
+      const client = getSupabaseClient();
+      void client.removeChannel(bidChangesChannel);
+      bidChangesChannel = null;
+    }
   };
 };
 
@@ -222,6 +305,9 @@ export const placeBidForBidderRegistration = async (
   if (error) {
     throw error;
   }
+
+  // Ensure connected SSE clients update immediately for bids placed through this API.
+  notifyBidChangeListeners();
 
   return getCurrentBidState(registration);
 };
